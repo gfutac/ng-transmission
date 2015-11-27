@@ -11,25 +11,10 @@ module Shared.Services {
 	
 	export class RpcService {
 		private $http: ng.IHttpService;
-		private postOptions: PostOptions;
-		private $window: ng.IWindowService;
 		
-		static $inject = ["$http", "$window"];
+		static $inject = ["$http"];
 		
-		constructor($http, $window) {
-			this.$http = $http;		
-			this.$window  = $window;
-			
-			this.postOptions = {
-				url: 'http://gfutac.ddns.net:9091/transmission/rpc',
-				method: 'POST',
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json',
-					'Authorization': 'Basic Z29yYW46Y2FuZXN0ZW4=',
-					'X-Transmission-Session-Id': 'CIWLcshd4X1DOZ4TqulC9FJuc4uK94lY2WtsjokKqkk91t6F',
-				}
-			}							
+		constructor($http) {
 		}	
 		
 		public getTorrents = () => {			

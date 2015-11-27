@@ -8,7 +8,7 @@ var Shared;
     var Services;
     (function (Services) {
         var RpcService = (function () {
-            function RpcService($http, $window) {
+            function RpcService($http) {
                 var _this = this;
                 this.getTorrents = function () {
                     _this.$http.get('http://localhost:9091/transmission/rpc', {
@@ -34,20 +34,8 @@ var Shared;
                     // 	console.log(response);
                     // });
                 };
-                this.$http = $http;
-                this.$window = $window;
-                this.postOptions = {
-                    url: 'http://gfutac.ddns.net:9091/transmission/rpc',
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Basic Z29yYW46Y2FuZXN0ZW4=',
-                        'X-Transmission-Session-Id': 'CIWLcshd4X1DOZ4TqulC9FJuc4uK94lY2WtsjokKqkk91t6F',
-                    }
-                };
             }
-            RpcService.$inject = ["$http", "$window"];
+            RpcService.$inject = ["$http"];
             return RpcService;
         })();
         Services.RpcService = RpcService;
