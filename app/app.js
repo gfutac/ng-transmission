@@ -44,7 +44,6 @@ var Shared;
                         'Content-Type': 'application/json',
                         'Authorization': 'Basic Z29yYW46Y2FuZXN0ZW4=',
                         'X-Transmission-Session-Id': 'CIWLcshd4X1DOZ4TqulC9FJuc4uK94lY2WtsjokKqkk91t6F',
-                        'Access-Control-Allow-Origin': 'localhost:80'
                     }
                 };
             }
