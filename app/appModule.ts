@@ -1,5 +1,5 @@
 /// <reference path="../typings/angularjs/angular.d.ts" />
-/// <reference path="../node_modules/angular-ui-router/api/angular-ui-router.d.ts" />
+/// <reference path="../typings/angularjs/angular-ui-router.d.ts" />
 
 /// <reference path="shared/sharedModule.ts" />
 /// <reference path="components/torrents/rpcService.ts" />

@@ -1,5 +1,5 @@
-/// <reference path="shared/sharedModule.ts" />
-/// <reference path="../typings/angularjs/angular.d.ts" />
+/// <reference path="../../shared/sharedModule.ts" />
+/// <reference path="../../../typings/angularjs/angular.d.ts" />
 
 module Shared.Services {
 	
@@ -15,12 +15,14 @@ module Shared.Services {
 		static $inject = ["$http"];
 		
 		constructor($http) {
+			this.$http = $http;
 		}	
 		
 		public getTorrents = () => {			
-			this.$http.get('http://localhost:9091/transmission/rpc', {
+			this.$http.post('http://localhost:8080/transmission/rpc', {
 				headers: {
 					'Authorization': 'Basic Z29yYW46Y2FuZXN0ZW4=',
+					'Content-Type': 'application/json',
 				}
 			}).
 			then(function (response){

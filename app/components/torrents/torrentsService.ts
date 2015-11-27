@@ -1,6 +1,6 @@
-/// <reference path="../typings/angularjs/angular.d.ts" />
-/// <reference path="shared/sharedModule.ts" />
-/// <reference path="shared/rpcService.ts" />
+/// <reference path="../../appModule.ts" />
+/// <reference path="../../../typings/angularjs/angular.d.ts" />
+/// <reference path="rpcService.ts" />
 
 module Shared.Services {	
 	

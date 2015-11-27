@@ -1,8 +1,8 @@
 (function () {
     angular.module("shared", []);
 })();
-/// <reference path="shared/sharedModule.ts" />
-/// <reference path="../typings/angularjs/angular.d.ts" />
+/// <reference path="../../shared/sharedModule.ts" />
+/// <reference path="../../../typings/angularjs/angular.d.ts" />
 var Shared;
 (function (Shared) {
     var Services;
@@ -11,9 +11,10 @@ var Shared;
             function RpcService($http) {
                 var _this = this;
                 this.getTorrents = function () {
-                    _this.$http.get('http://localhost:9091/transmission/rpc', {
+                    _this.$http.post('http://localhost:8080/transmission/rpc', {
                         headers: {
                             'Authorization': 'Basic Z29yYW46Y2FuZXN0ZW4=',
+                            'Content-Type': 'application/json',
                         }
                     }).
                         then(function (response) {
@@ -34,6 +35,7 @@ var Shared;
                     // 	console.log(response);
                     // });
                 };
+                this.$http = $http;
             }
             RpcService.$inject = ["$http"];
             return RpcService;
@@ -42,9 +44,9 @@ var Shared;
         angular.module("shared").service("RpcService", RpcService);
     })(Services = Shared.Services || (Shared.Services = {}));
 })(Shared || (Shared = {}));
-/// <reference path="../typings/angularjs/angular.d.ts" />
-/// <reference path="shared/sharedModule.ts" />
-/// <reference path="shared/rpcService.ts" />
+/// <reference path="../../appModule.ts" />
+/// <reference path="../../../typings/angularjs/angular.d.ts" />
+/// <reference path="rpcService.ts" />
 var Shared;
 (function (Shared) {
     var Services;
@@ -78,7 +80,7 @@ var Shared;
     })(Services = Shared.Services || (Shared.Services = {}));
 })(Shared || (Shared = {}));
 /// <reference path="../typings/angularjs/angular.d.ts" />
-/// <reference path="../node_modules/angular-ui-router/api/angular-ui-router.d.ts" />
+/// <reference path="../typings/angularjs/angular-ui-router.d.ts" />
 /// <reference path="shared/sharedModule.ts" />
 /// <reference path="components/torrents/rpcService.ts" />
 /// <reference path="components/torrents/torrentsService.ts" />
@@ -141,8 +143,8 @@ var Shared;
             return eehNavigation;
         }]);
 })();
-/// <reference path="../typings/angularjs/angular.d.ts" />
-/// <reference path="appModule.ts" />
+/// <reference path="../../appModule.ts" />
+/// <reference path="../../../typings/angularjs/angular.d.ts" />
 (function () {
     angular.module("app")
         .directive("torrentEntry", [function () {
@@ -158,8 +160,8 @@ var Shared;
             };
         }]);
 })();
-/// <reference path="../typings/angularjs/angular.d.ts" />
-/// <reference path="appModule.ts" />
+/// <reference path="../../appModule.ts" />
+/// <reference path="../../../typings/angularjs/angular.d.ts" />
 (function () {
     angular.module("app")
         .directive("torrentList", [function () {

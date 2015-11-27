@@ -1,5 +1,5 @@
-/// <reference path="../typings/angularjs/angular.d.ts" />
-/// <reference path="appModule.ts" />
+/// <reference path="../../appModule.ts" />
+/// <reference path="../../../typings/angularjs/angular.d.ts" />
 
 (function(){
 	angular.module("app")
@@ -15,5 +15,5 @@
 					
 				}
 			};
-		}])
+		}]);
 })();
