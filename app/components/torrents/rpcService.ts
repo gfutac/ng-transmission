@@ -11,18 +11,22 @@ module Shared.Services {
 	
 	export class RpcService {
 		private $http: ng.IHttpService;
+		private $q: ng.IQService;
 		
-		static $inject = ["$http"];
+		static $inject = ["$http", "$q"];
 		
-		constructor($http) {
+		constructor($http, $q) {
 			this.$http = $http;
+			this.$q = $q;
 		}	
 		
 		public getTorrents = () => {			
 			
+			var deferred = this.$q.defer();
+			
 			var data = {  "arguments": 
 							{
-								"fields": [ "id", "name" ],
+								"fields": [ "id", "name", "status", "error", "errorString", "isFinished", "isStalled", "addedDate", "eta", "rateDownload", "rateUpload", "percentDone", "peersSendingToUs",  "peersConnected", "totalSize", "leftUntilDone"],
 								"ids": "recently-active"
 							},
 							"method": "torrent-get"
@@ -35,10 +39,12 @@ module Shared.Services {
 				}
 			}).
 			then(function (response){
-				console.log(response);
+				deferred.resolve(response);				
 			}, function (response){
-				console.log(response);
-			});			
+				deferred.reject({msg: "Something gone wrong."})
+			});	
+			
+			return deferred.promise;		
 		}	
 		
 		

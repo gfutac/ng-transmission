@@ -31,19 +31,31 @@
 				name: "app.torrents",
 				url: "/torrents",
 				template: '<torrent-list torrents="torrents"></torrent-list>',
-				controller: ["$scope", "TorrentService", function($scope: any, ts: Shared.Services.TorrentService){
-					$scope.torrents = ts.getAllTorrents();
+				controller: ["$scope", "TorrentService", function($scope: any, ts: Shared.Services.TorrentService){					
+					ts.getRecentlyActiveTorrents().then(function(torrents){
+						$scope.torrents = torrents;	
+					})										 
 				}]
 			})
 			.state({
 				name: "app.downloading",
 				url: "/downloading",
-				template: "downloading torrents",
+				template: '<torrent-list torrents="torrents"></torrent-list>',
+				controller: ["$scope", "TorrentService", function($scope: any, ts: Shared.Services.TorrentService){					
+					ts.getDownloadingTorrents().then(function(torrents){
+						$scope.torrents = torrents;	
+					})										 
+				}]
 			})		
 			.state({
 				name: "app.seeding",
 				url: "/seeding",
-				template: "seeding torrents",
+				template: '<torrent-list torrents="torrents"></torrent-list>',
+				controller: ["$scope", "TorrentService", function($scope: any, ts: Shared.Services.TorrentService){					
+					ts.getSeedingTorrents().then(function(torrents){
+						$scope.torrents = torrents;	
+					})										 
+				}]
 			}); 				       	
 	}]);
 })();	

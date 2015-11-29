@@ -7,6 +7,7 @@ module Shared.Services {
 	interface Torrent{
 		id: number;
 		name: string;
+		status: number;
 		error?: number;
 		errorString?: string;
 		isFinished?: boolean;
@@ -22,34 +23,69 @@ module Shared.Services {
 		leftUntilDone?: number;
 	}
 	
+	enum FilterEnum {
+		All = 1,
+		Stopped = 2,
+		Downloading = 3,
+		Seeding = 4
+	}
+	
 	export class TorrentService{
 		private torrents: Torrent[] = [];
 		private rpc: Shared.Services.RpcService;
+		private $q: ng.IQService;		
+		private torrentFilters: { [filterType: number]: (torrent: Torrent) => boolean } = {};
 			
-		static $inject = ["RpcService"]			
+		static $inject = ["RpcService", "$q"]			
 			
-		constructor(rpc) {
+		constructor(rpc, $q) {
 			this.rpc = rpc;
+			this.$q = $q;
 			
-			this.torrents = [];
-			this.torrents.push({id: 1, name: "torrent 1"});
-			this.torrents.push({id: 2, name: "torrent 2"});
-			this.torrents.push({id: 3, name: "torrent 3"});
-			this.torrents.push({id: 4, name: "torrent 4"});
-			this.torrents.push({id: 5, name: "torrent 5"});
-			this.torrents.push({id: 6, name: "torrent 6"});
-			this.torrents.push({id: 7, name: "torrent 7"});	
+			this.torrentFilters[FilterEnum.All] = function(torrent: Torrent) { return true; };
+			this.torrentFilters[FilterEnum.Stopped] = function(torrent: Torrent) { return torrent.status === 0; };
+			this.torrentFilters[FilterEnum.Downloading] = function(torrent: Torrent) { return torrent.status === 4; };
+			this.torrentFilters[FilterEnum.Seeding] = function(torrent: Torrent) { return torrent.status === 6; };
 		}
 		
-		public addTorrent = (torrent: Torrent) => {
-			this.torrents.push(torrent);
+		private getAndFilterTorrents = (filterType: FilterEnum) => {
+			var filterFunc = this.torrentFilters[filterType];
+			
+			var deferred = this.$q.defer();
+			
+			this.rpc.getTorrents().then(function(response){
+				if (response.data.result === "success"){
+					var data = response.data.arguments.torrents.filter(filterFunc);
+					
+					this.torrents = [];
+					
+					data.forEach((torrent: Torrent) => {
+						this.torrents.push(torrent);						
+					});
+															
+					deferred.resolve(this.torrents);					
+				} else {
+					deferred.reject({msg: "Something wrong happened."});	
+				}
+				
+
+			}, function(err){
+				deferred.reject(err);
+			})			
+			
+			return deferred.promise;			
+		}
+				
+		public getRecentlyActiveTorrents = () => {
+			return this.getAndFilterTorrents(FilterEnum.All);
 		}
 		
-		public getAllTorrents = () => {
-			
-			this.rpc.getTorrents();
-			
-			return this.torrents;
+		public getDownloadingTorrents = () => {
+			return this.getAndFilterTorrents(FilterEnum.Downloading);			
+		}
+		
+		public getSeedingTorrents = () => {
+			return this.getAndFilterTorrents(FilterEnum.Seeding);			
 		}
 		
 		

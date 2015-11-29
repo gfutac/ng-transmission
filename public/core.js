@@ -8,11 +8,12 @@ var Shared;
     var Services;
     (function (Services) {
         var RpcService = (function () {
-            function RpcService($http) {
+            function RpcService($http, $q) {
                 var _this = this;
                 this.getTorrents = function () {
+                    var deferred = _this.$q.defer();
                     var data = { "arguments": {
-                            "fields": ["id", "name"],
+                            "fields": ["id", "name", "status", "error", "errorString", "isFinished", "isStalled", "addedDate", "eta", "rateDownload", "rateUpload", "percentDone", "peersSendingToUs", "peersConnected", "totalSize", "leftUntilDone"],
                             "ids": "recently-active"
                         },
                         "method": "torrent-get"
@@ -24,14 +25,16 @@ var Shared;
                         }
                     }).
                         then(function (response) {
-                        console.log(response);
+                        deferred.resolve(response);
                     }, function (response) {
-                        console.log(response);
+                        deferred.reject({ msg: "Something gone wrong." });
                     });
+                    return deferred.promise;
                 };
                 this.$http = $http;
+                this.$q = $q;
             }
-            RpcService.$inject = ["$http"];
+            RpcService.$inject = ["$http", "$q"];
             return RpcService;
         })();
         Services.RpcService = RpcService;
@@ -45,28 +48,56 @@ var Shared;
 (function (Shared) {
     var Services;
     (function (Services) {
+        var FilterEnum;
+        (function (FilterEnum) {
+            FilterEnum[FilterEnum["All"] = 1] = "All";
+            FilterEnum[FilterEnum["Stopped"] = 2] = "Stopped";
+            FilterEnum[FilterEnum["Downloading"] = 3] = "Downloading";
+            FilterEnum[FilterEnum["Seeding"] = 4] = "Seeding";
+        })(FilterEnum || (FilterEnum = {}));
         var TorrentService = (function () {
-            function TorrentService(rpc) {
+            function TorrentService(rpc, $q) {
                 var _this = this;
                 this.torrents = [];
-                this.addTorrent = function (torrent) {
-                    _this.torrents.push(torrent);
+                this.torrentFilters = {};
+                this.getAndFilterTorrents = function (filterType) {
+                    var filterFunc = _this.torrentFilters[filterType];
+                    var deferred = _this.$q.defer();
+                    _this.rpc.getTorrents().then(function (response) {
+                        var _this = this;
+                        if (response.data.result === "success") {
+                            var data = response.data.arguments.torrents.filter(filterFunc);
+                            this.torrents = [];
+                            data.forEach(function (torrent) {
+                                _this.torrents.push(torrent);
+                            });
+                            deferred.resolve(this.torrents);
+                        }
+                        else {
+                            deferred.reject({ msg: "Something wrong happened." });
+                        }
+                    }, function (err) {
+                        deferred.reject(err);
+                    });
+                    return deferred.promise;
                 };
-                this.getAllTorrents = function () {
-                    _this.rpc.getTorrents();
-                    return _this.torrents;
+                this.getRecentlyActiveTorrents = function () {
+                    return _this.getAndFilterTorrents(FilterEnum.All);
+                };
+                this.getDownloadingTorrents = function () {
+                    return _this.getAndFilterTorrents(FilterEnum.Downloading);
+                };
+                this.getSeedingTorrents = function () {
+                    return _this.getAndFilterTorrents(FilterEnum.Seeding);
                 };
                 this.rpc = rpc;
-                this.torrents = [];
-                this.torrents.push({ id: 1, name: "torrent 1" });
-                this.torrents.push({ id: 2, name: "torrent 2" });
-                this.torrents.push({ id: 3, name: "torrent 3" });
-                this.torrents.push({ id: 4, name: "torrent 4" });
-                this.torrents.push({ id: 5, name: "torrent 5" });
-                this.torrents.push({ id: 6, name: "torrent 6" });
-                this.torrents.push({ id: 7, name: "torrent 7" });
+                this.$q = $q;
+                this.torrentFilters[FilterEnum.All] = function (torrent) { return true; };
+                this.torrentFilters[FilterEnum.Stopped] = function (torrent) { return torrent.status === 0; };
+                this.torrentFilters[FilterEnum.Downloading] = function (torrent) { return torrent.status === 4; };
+                this.torrentFilters[FilterEnum.Seeding] = function (torrent) { return torrent.status === 6; };
             }
-            TorrentService.$inject = ["RpcService"];
+            TorrentService.$inject = ["RpcService", "$q"];
             return TorrentService;
         })();
         Services.TorrentService = TorrentService;
@@ -99,18 +130,30 @@ var Shared;
                 url: "/torrents",
                 template: '<torrent-list torrents="torrents"></torrent-list>',
                 controller: ["$scope", "TorrentService", function ($scope, ts) {
-                        $scope.torrents = ts.getAllTorrents();
+                        ts.getRecentlyActiveTorrents().then(function (torrents) {
+                            $scope.torrents = torrents;
+                        });
                     }]
             })
                 .state({
                 name: "app.downloading",
                 url: "/downloading",
-                template: "downloading torrents",
+                template: '<torrent-list torrents="torrents"></torrent-list>',
+                controller: ["$scope", "TorrentService", function ($scope, ts) {
+                        ts.getDownloadingTorrents().then(function (torrents) {
+                            $scope.torrents = torrents;
+                        });
+                    }]
             })
                 .state({
                 name: "app.seeding",
                 url: "/seeding",
-                template: "seeding torrents",
+                template: '<torrent-list torrents="torrents"></torrent-list>',
+                controller: ["$scope", "TorrentService", function ($scope, ts) {
+                        ts.getSeedingTorrents().then(function (torrents) {
+                            $scope.torrents = torrents;
+                        });
+                    }]
             });
         }]);
 })();
