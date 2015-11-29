@@ -55,14 +55,7 @@ module Shared.Services {
 			
 			this.rpc.getTorrents().then(function(response){
 				if (response.data.result === "success"){
-					var data = response.data.arguments.torrents.filter(filterFunc);
-					
-					this.torrents = [];
-					
-					data.forEach((torrent: Torrent) => {
-						this.torrents.push(torrent);						
-					});
-															
+					this.torrents = response.data.arguments.torrents.filter(filterFunc);																			
 					deferred.resolve(this.torrents);					
 				} else {
 					deferred.reject({msg: "Something wrong happened."});	

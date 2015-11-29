@@ -64,13 +64,8 @@ var Shared;
                     var filterFunc = _this.torrentFilters[filterType];
                     var deferred = _this.$q.defer();
                     _this.rpc.getTorrents().then(function (response) {
-                        var _this = this;
                         if (response.data.result === "success") {
-                            var data = response.data.arguments.torrents.filter(filterFunc);
-                            this.torrents = [];
-                            data.forEach(function (torrent) {
-                                _this.torrents.push(torrent);
-                            });
+                            this.torrents = response.data.arguments.torrents.filter(filterFunc);
                             deferred.resolve(this.torrents);
                         }
                         else {

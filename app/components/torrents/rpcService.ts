@@ -24,13 +24,13 @@ module Shared.Services {
 			
 			var deferred = this.$q.defer();
 			
-			var data = {  "arguments": 
-							{
-								"fields": [ "id", "name", "status", "error", "errorString", "isFinished", "isStalled", "addedDate", "eta", "rateDownload", "rateUpload", "percentDone", "peersSendingToUs",  "peersConnected", "totalSize", "leftUntilDone"],
-								"ids": "recently-active"
-							},
-							"method": "torrent-get"
-						};
+			var data = {  
+				"arguments":{
+					"fields": [ "id", "name", "status", "error", "errorString", "isFinished", "isStalled", "addedDate", "eta", "rateDownload", "rateUpload", "percentDone", "peersSendingToUs",  "peersConnected", "totalSize", "leftUntilDone"],
+					"ids": "recently-active"
+				},
+				"method": "torrent-get"
+			};
 			
 			this.$http.post('/transmission/rpc', data, {
 				headers: {
