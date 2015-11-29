@@ -19,7 +19,16 @@ module Shared.Services {
 		}	
 		
 		public getTorrents = () => {			
-			this.$http.post('http://localhost:8080/transmission/rpc', {
+			
+			var data = {  "arguments": 
+							{
+								"fields": [ "id", "name" ],
+								"ids": "recently-active"
+							},
+							"method": "torrent-get"
+						};
+			
+			this.$http.post('/transmission/rpc', data, {
 				headers: {
 					'Authorization': 'Basic Z29yYW46Y2FuZXN0ZW4=',
 					'Content-Type': 'application/json',
@@ -29,21 +38,7 @@ module Shared.Services {
 				console.log(response);
 			}, function (response){
 				console.log(response);
-			});
-			
-						
-			// this.$http.jsonp('http://localhost:9091/transmission/rpc', {
-			// 	headers: {
-			// 		'Accept': 'application/json',
-			// 		'Content-Type': 'application/json',
-			// 		'Authorization': 'Basic Z29yYW46Y2FuZXN0ZW4=',
-			// 		'X-Transmission-Session-Id': 'pxd9iRrzyOT9lKqvAYPqlgYQTkRylMyRYqykCNwNt8BUkJNN',
-			// 	}				
-			// }).then(function (response){
-			// 	console.log(response);
-			// }, function (response){
-			// 	console.log(response);
-			// });
+			});			
 		}	
 		
 		
