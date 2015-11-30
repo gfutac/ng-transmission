@@ -415,7 +415,7 @@ var Helper;
                 },
                 transclude: true,
                 replace: true,
-                template: '<ul> <li ng-Repeat="torrent in torrents"> <torrent-entry torrent="torrent"> </torrent-entry> </li> </ul>',
+                templateUrl: 'app/components/torrents/torrentList.html',
             };
         }]);
 })();
