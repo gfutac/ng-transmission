@@ -7,8 +7,7 @@ module Helper.Services {
 		var ret = Math.floor(this * Math.pow (10, place)) / Math.pow(10, place);
 		return ret.toFixed(place);
 	}
-	
-	
+		
 	export class Helper{
 		
 		// constatns
@@ -33,20 +32,27 @@ module Helper.Services {
 		
 		constructor() { }
 		
+		/**
+		 * only public method - accepts Torrent and prettyfies it
+		 */		
 		public prettyfyTorrent = (torrent: Shared.Services.Torrent): any => {
 			var copy: any = torrent;
 			
 			copy.addedDate = new Date(torrent.addedDate * 1000);
-			copy.eta = this.timeInterval(torrent.eta);
+			copy.eta = this.timeInterval(torrent.eta == -1 ? 0 : torrent.eta);
 			copy.rateDownload = this.speed(this.toKBps(torrent.rateDownload));
 			copy.rateUpload = this.speed(this.toKBps(torrent.rateUpload));
-			copy.percentDone = this.percentString(torrent.percentDone);
+			copy.percentDone = this.percentString(torrent.percentDone * 100);
 			copy.totalSize = this.size(torrent.totalSize);
 			copy.leftUntilDone = this.size(torrent.leftUntilDone);
+			copy.isFinished = torrent.leftUntilDone === 0;
 			
 			return copy;
 		}	
 		
+		/**
+		 * string representation of the estimated time until completetion
+		 */
 		private timeInterval = (seconds: number) => {
 			var days    = Math.floor (seconds / 86400),
 			    hours   = Math.floor ((seconds % 86400) / 3600),
