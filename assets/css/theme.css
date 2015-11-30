@@ -3,3 +3,11 @@ body{
 	color: #ccc;
 }
 
+.navbar-default {
+	background-color: none;
+	border-color: none;
+}
+
+#eeh-navigation-page-wrapper{
+	border-left: none;
+}
