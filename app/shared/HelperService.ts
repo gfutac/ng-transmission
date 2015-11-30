@@ -36,7 +36,7 @@ module Helper.Services {
 		 * only public method - accepts Torrent and prettyfies it
 		 */		
 		public prettyfyTorrent = (torrent: Shared.Services.Torrent): any => {
-			var copy: any = torrent;
+			var copy: any = angular.merge({}, torrent);
 			
 			copy.addedDate = new Date(torrent.addedDate * 1000);
 			copy.eta = this.timeInterval(torrent.eta == -1 ? 0 : torrent.eta);
