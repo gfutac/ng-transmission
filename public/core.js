@@ -132,17 +132,24 @@ var Helper;
                 this.mem_M_str = 'MiB';
                 this.mem_G_str = 'GiB';
                 this.mem_T_str = 'TiB';
+                /**
+                 * only public method - accepts Torrent and prettyfies it
+                 */
                 this.prettyfyTorrent = function (torrent) {
-                    var copy = torrent;
+                    var copy = angular.merge({}, torrent);
                     copy.addedDate = new Date(torrent.addedDate * 1000);
-                    copy.eta = _this.timeInterval(torrent.eta);
+                    copy.eta = _this.timeInterval(torrent.eta == -1 ? 0 : torrent.eta);
                     copy.rateDownload = _this.speed(_this.toKBps(torrent.rateDownload));
                     copy.rateUpload = _this.speed(_this.toKBps(torrent.rateUpload));
-                    copy.percentDone = _this.percentString(torrent.percentDone);
+                    copy.percentDone = _this.percentString(torrent.percentDone * 100);
                     copy.totalSize = _this.size(torrent.totalSize);
                     copy.leftUntilDone = _this.size(torrent.leftUntilDone);
+                    copy.isFinished = torrent.leftUntilDone === 0;
                     return copy;
                 };
+                /**
+                 * string representation of the estimated time until completetion
+                 */
                 this.timeInterval = function (seconds) {
                     var days = Math.floor(seconds / 86400), hours = Math.floor((seconds % 86400) / 3600), minutes = Math.floor((seconds % 3600) / 60), seconds = Math.floor(seconds % 60), d = days + ' ' + (days > 1 ? 'days' : 'day'), h = hours + ' ' + (hours > 1 ? 'hours' : 'hour'), m = minutes + ' ' + (minutes > 1 ? 'minutes' : 'minute'), s = seconds + ' ' + (seconds > 1 ? 'seconds' : 'second');
                     if (days) {
