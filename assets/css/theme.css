@@ -4,8 +4,8 @@ body{
 }
 
 .navbar-default {
-	background-color: none;
-	border-color: none;
+	background-color: transparent;
+	border-color: transparent;
 }
 
 #eeh-navigation-page-wrapper{
