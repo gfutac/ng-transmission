@@ -4,7 +4,7 @@
 
 module Shared.Services {	
 	
-	interface Torrent{
+	export interface Torrent{
 		id: number;
 		name: string;
 		status: number;

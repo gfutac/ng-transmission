@@ -4,6 +4,7 @@
 /// <reference path="shared/sharedModule.ts" />
 /// <reference path="components/torrents/rpcService.ts" />
 /// <reference path="components/torrents/torrentsService.ts" />
+/// <reference path="shared/HelperService.ts" />
 
 (function(){	
 	var app = angular.module("app", ['ui.router', 'ui.bootstrap', 'eehNavigation', 'pascalprecht.translate', 'shared']);
@@ -31,9 +32,11 @@
 				name: "app.torrents",
 				url: "/torrents",
 				template: '<torrent-list torrents="torrents"></torrent-list>',
-				controller: ["$scope", "TorrentService", function($scope: any, ts: Shared.Services.TorrentService){					
-					ts.getRecentlyActiveTorrents().then(function(torrents){
-						$scope.torrents = torrents;	
+				controller: ["$scope", "TorrentService", "HelperService", function($scope: any, ts: Shared.Services.TorrentService, hp: Helper.Services.Helper){					
+					ts.getRecentlyActiveTorrents().then(function(torrents: Shared.Services.Torrent[]){
+						$scope.torrents = torrents.map(function(torrent: Shared.Services.Torrent){
+							return hp.prettyfyTorrent(torrent);
+						});	
 					})										 
 				}]
 			})
