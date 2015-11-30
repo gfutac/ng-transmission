@@ -8,7 +8,6 @@
 
 (function(){	
 	var app = angular.module("app", ['ui.router', 'ui.bootstrap', 'eehNavigation', 'pascalprecht.translate', 'shared']);
-	
 		
 	app.config(["$stateProvider", "$urlRouterProvider", "$translateProvider",
 		function($stateProvider: ng.ui.IStateProvider, $urlRouterProvider : ng.ui.IUrlRouterProvider, $translateProvider){			

@@ -102,14 +102,14 @@ var Shared;
 })(Shared || (Shared = {}));
 /// <reference path="sharedModule.ts" />
 /// <reference path="../../typings/angularjs/angular.d.ts" />
-Number.prototype.toTruncFixed = function (place) {
-    var ret = Math.floor(this * Math.pow(10, place)) / Math.pow(10, place);
-    return ret.toFixed(place);
-};
 var Helper;
 (function (Helper_1) {
     var Services;
     (function (Services) {
+        Number.prototype.toTruncFixed = function (place) {
+            var ret = Math.floor(this * Math.pow(10, place)) / Math.pow(10, place);
+            return ret.toFixed(place);
+        };
         var Helper = (function () {
             function Helper() {
                 var _this = this;

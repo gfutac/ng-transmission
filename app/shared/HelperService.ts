@@ -1,12 +1,13 @@
 /// <reference path="sharedModule.ts" />
 /// <reference path="../../typings/angularjs/angular.d.ts" />
 
-Number.prototype.toTruncFixed = function(place) {
-	var ret = Math.floor(this * Math.pow (10, place)) / Math.pow(10, place);
-	return ret.toFixed(place);
-}
-
 module Helper.Services {
+	
+	Number.prototype.toTruncFixed = function(place) {
+		var ret = Math.floor(this * Math.pow (10, place)) / Math.pow(10, place);
+		return ret.toFixed(place);
+	}
+	
 	
 	export class Helper{
 		
