@@ -217,4 +217,6 @@ module Helper.Services {
 			return this.percentString(x);
 		}		
 	}
+	
+	angular.module("shared").service("HelperService", Helper);	
 }

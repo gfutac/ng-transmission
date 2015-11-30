@@ -293,6 +293,7 @@ var Helper;
             return Helper;
         })();
         Services.Helper = Helper;
+        angular.module("shared").service("HelperService", Helper);
     })(Services = Helper_1.Services || (Helper_1.Services = {}));
 })(Helper || (Helper = {}));
 /// <reference path="../typings/angularjs/angular.d.ts" />
