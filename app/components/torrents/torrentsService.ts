@@ -79,9 +79,7 @@ module Shared.Services {
 		
 		public getSeedingTorrents = () => {
 			return this.getAndFilterTorrents(FilterEnum.Seeding);			
-		}
-		
-		
+		}				
 	}
 	
 	angular.module("shared").service("TorrentService", TorrentService);		

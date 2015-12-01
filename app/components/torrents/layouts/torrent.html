@@ -8,7 +8,7 @@
 			<div class="progress-bar progress-bar-default progress-bar-striped" role="progressbar" aria-valuenow="{{torrent.percentDone}}" aria-valuemin="0" aria-valuemax="100" style="width: {{torrent.percentDone}}%">				
 			</div>
 		</div>									
-		<span ng-show="!hasError && isDownloading" class="downloading-ratio">x of y (ratio) - {{torrent.eta}}</span>
+		<span ng-show="!hasError && isDownloading" class="downloading-ratio">{{torrent.downloadedSize}} of {{torrent.totalSize}} - {{torrent.eta}} remaining</span>
 		<span ng-show="!hasError && isSeeding" class="seeding-ratio">{{torrent.totalSize}}, uploaded size (ratio)</span>				
 	</div> 
 </a> 

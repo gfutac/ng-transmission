@@ -14,16 +14,22 @@
 				link: function(scope: any, element, attributes){
 					
 				},
-				controller: ["$scope", function($scope){
+				controller: ["$scope", "HelperService", function($scope, hp: Shared.Services.Helper){
 					var torrent: Shared.Services.Torrent = $scope.torrent;
 
 					$scope.hasError = torrent.error !== 0 || torrent.errorString !== "";
 					$scope.isDownloading = torrent.status === 4;
 					$scope.isSeeding = torrent.status === 6;
-					$scope.percentDone = torrent.percentDone;
-					$scope.eta = torrent.eta;
+					$scope.torrent.percentDone = torrent.percentDone * 100;
+					$scope.torrent.eta = torrent.eta == -1 ? 0 : torrent.eta;
 					$scope.totalSize = torrent.totalSize;
 										
+					$scope.torrent.rateDownload = hp.speed(hp.toKBps($scope.torrent.rateDownload));
+					$scope.torrent.rateUpload = hp.speed(hp.toKBps($scope.torrent.rateUpload));
+					
+					$scope.torrent.eta = hp.timeInterval($scope.torrent.eta);	
+					$scope.torrent.downloadedSize = hp.size(torrent.totalSize - torrent.leftUntilDone);
+					$scope.torrent.totalSize = hp.size(torrent.totalSize);	
 				}]
 			};
 		}]);

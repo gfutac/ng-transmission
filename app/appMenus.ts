@@ -7,10 +7,12 @@
 		
 		// navbar
 		eehNavigation
-			// .menuItem("navbar.empty", {
-			// 	isVisible: false,
-			// 	weight: 1
-			// })
+			.menuItem("navbar.user", {
+				text: "User",
+				iconClass: "fa fa-user",
+				weight: 1,
+				click: function(){alert("set user data")}
+			})
 			.menuItem("navbar.addTorrent", {
 				text: "Add torrent",
 				iconClass: "fa fa-upload",

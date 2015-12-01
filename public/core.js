@@ -102,8 +102,8 @@ var Shared;
 })(Shared || (Shared = {}));
 /// <reference path="sharedModule.ts" />
 /// <reference path="../../typings/angularjs/angular.d.ts" />
-var Helper;
-(function (Helper_1) {
+var Shared;
+(function (Shared) {
     var Services;
     (function (Services) {
         Number.prototype.toTruncFixed = function (place) {
@@ -305,8 +305,8 @@ var Helper;
         })();
         Services.Helper = Helper;
         angular.module("shared").service("HelperService", Helper);
-    })(Services = Helper_1.Services || (Helper_1.Services = {}));
-})(Helper || (Helper = {}));
+    })(Services = Shared.Services || (Shared.Services = {}));
+})(Shared || (Shared = {}));
 /// <reference path="../typings/angularjs/angular.d.ts" />
 /// <reference path="../typings/angularjs/angular-ui-router.d.ts" />
 /// <reference path="shared/sharedModule.ts" />
@@ -333,13 +333,18 @@ var Helper;
                 name: "app.torrents",
                 url: "/torrents",
                 template: '<torrent-list torrents="torrents"></torrent-list>',
-                controller: ["$scope", "TorrentService", "HelperService", function ($scope, ts, hp) {
+                controller: ["$scope", "$interval", "TorrentService", function ($scope, $interval, ts) {
                         ts.getRecentlyActiveTorrents().then(function (torrents) {
-                            // $scope.torrents = torrents.map(function(torrent: Shared.Services.Torrent){
-                            // 	return hp.prettyfyTorrent(torrent);
-                            // });	
-                            console.log(torrents);
                             $scope.torrents = torrents;
+                        });
+                        var stop = $interval(function () {
+                            ts.getRecentlyActiveTorrents().then(function (torrents) {
+                                $scope.torrents = torrents;
+                            });
+                        }, 1500);
+                        $scope.$on("$stateChangeStart", function () {
+                            $interval.cancel(stop);
+                            stop = undefined;
                         });
                     }]
             })
@@ -347,9 +352,18 @@ var Helper;
                 name: "app.downloading",
                 url: "/downloading",
                 template: '<torrent-list torrents="torrents"></torrent-list>',
-                controller: ["$scope", "TorrentService", function ($scope, ts) {
+                controller: ["$scope", "$interval", "TorrentService", function ($scope, $interval, ts) {
                         ts.getDownloadingTorrents().then(function (torrents) {
                             $scope.torrents = torrents;
+                        });
+                        var stop = $interval(function () {
+                            ts.getDownloadingTorrents().then(function (torrents) {
+                                $scope.torrents = torrents;
+                            });
+                        }, 1500);
+                        $scope.$on("$stateChangeStart", function () {
+                            $interval.cancel(stop);
+                            stop = undefined;
                         });
                     }]
             })
@@ -357,9 +371,18 @@ var Helper;
                 name: "app.seeding",
                 url: "/seeding",
                 template: '<torrent-list torrents="torrents"></torrent-list>',
-                controller: ["$scope", "TorrentService", function ($scope, ts) {
+                controller: ["$scope", "$interval", "TorrentService", function ($scope, $interval, ts) {
                         ts.getSeedingTorrents().then(function (torrents) {
                             $scope.torrents = torrents;
+                        });
+                        var stop = $interval(function () {
+                            ts.getSeedingTorrents().then(function (torrents) {
+                                $scope.torrents = torrents;
+                            });
+                        }, 1500);
+                        $scope.$on("$stateChangeStart", function () {
+                            $interval.cancel(stop);
+                            stop = undefined;
                         });
                     }]
             });
@@ -371,6 +394,12 @@ var Helper;
     angular.module("app").factory("app-menus", ["eehNavigation", function (eehNavigation) {
             // navbar
             eehNavigation
+                .menuItem("navbar.user", {
+                text: "User",
+                iconClass: "fa fa-user",
+                weight: 1,
+                click: function () { alert("set user data"); }
+            })
                 .menuItem("navbar.addTorrent", {
                 text: "Add torrent",
                 iconClass: "fa fa-upload",
@@ -417,14 +446,19 @@ var Helper;
                 templateUrl: "app/components/torrents/layouts/torrent.html",
                 link: function (scope, element, attributes) {
                 },
-                controller: ["$scope", function ($scope) {
+                controller: ["$scope", "HelperService", function ($scope, hp) {
                         var torrent = $scope.torrent;
                         $scope.hasError = torrent.error !== 0 || torrent.errorString !== "";
                         $scope.isDownloading = torrent.status === 4;
                         $scope.isSeeding = torrent.status === 6;
-                        $scope.percentDone = torrent.percentDone;
-                        $scope.eta = torrent.eta;
+                        $scope.torrent.percentDone = torrent.percentDone * 100;
+                        $scope.torrent.eta = torrent.eta == -1 ? 0 : torrent.eta;
                         $scope.totalSize = torrent.totalSize;
+                        $scope.torrent.rateDownload = hp.speed(hp.toKBps($scope.torrent.rateDownload));
+                        $scope.torrent.rateUpload = hp.speed(hp.toKBps($scope.torrent.rateUpload));
+                        $scope.torrent.eta = hp.timeInterval($scope.torrent.eta);
+                        $scope.torrent.downloadedSize = hp.size(torrent.totalSize - torrent.leftUntilDone);
+                        $scope.torrent.totalSize = hp.size(torrent.totalSize);
                     }]
             };
         }]);

@@ -31,34 +31,65 @@
 				name: "app.torrents",
 				url: "/torrents",
 				template: '<torrent-list torrents="torrents"></torrent-list>',
-				controller: ["$scope", "TorrentService", "HelperService", function($scope: any, ts: Shared.Services.TorrentService, hp: Helper.Services.Helper){					
+				controller: ["$scope", "$interval", "TorrentService", function($scope: any, $interval: any, ts: Shared.Services.TorrentService){
 					ts.getRecentlyActiveTorrents().then(function(torrents: Shared.Services.Torrent[]){
-						// $scope.torrents = torrents.map(function(torrent: Shared.Services.Torrent){
-						// 	return hp.prettyfyTorrent(torrent);
-						// });	
-						console.log(torrents);
-						$scope.torrents = torrents;
-					})										 
+						$scope.torrents = torrents;												
+					});
+																				
+					var stop = $interval(function(){
+						ts.getRecentlyActiveTorrents().then(function(torrents: Shared.Services.Torrent[]){
+							$scope.torrents = torrents;
+						});										 						
+					}, 1500);
+										
+					$scope.$on("$stateChangeStart", function(){
+						$interval.cancel(stop);
+						stop = undefined;					
+					});					
 				}]
 			})
 			.state({
 				name: "app.downloading",
 				url: "/downloading",
 				template: '<torrent-list torrents="torrents"></torrent-list>',
-				controller: ["$scope", "TorrentService", function($scope: any, ts: Shared.Services.TorrentService){					
-					ts.getDownloadingTorrents().then(function(torrents){
-						$scope.torrents = torrents;	
-					})										 
+				controller: ["$scope", "$interval", "TorrentService", function($scope: any, $interval: any, ts: Shared.Services.TorrentService){			
+					ts.getDownloadingTorrents().then(function(torrents: Shared.Services.Torrent[]){
+						$scope.torrents = torrents;												
+					});
+																				
+					var stop = $interval(function(){
+						ts.getDownloadingTorrents().then(function(torrents: Shared.Services.Torrent[]){
+							$scope.torrents = torrents;
+						});										 						
+					}, 1500);
+					
+					$scope.$on("$stateChangeStart", function(){
+						$interval.cancel(stop);
+						stop = undefined;					
+					});					
+										 
 				}]
 			})		
 			.state({
 				name: "app.seeding",
 				url: "/seeding",
 				template: '<torrent-list torrents="torrents"></torrent-list>',
-				controller: ["$scope", "TorrentService", function($scope: any, ts: Shared.Services.TorrentService){					
-					ts.getSeedingTorrents().then(function(torrents){
-						$scope.torrents = torrents;	
-					})										 
+				controller: ["$scope", "$interval", "TorrentService", function($scope: any, $interval: any, ts: Shared.Services.TorrentService){					
+					ts.getSeedingTorrents().then(function(torrents: Shared.Services.Torrent[]){
+						$scope.torrents = torrents;												
+					});
+																				
+					var stop = $interval(function(){
+						ts.getSeedingTorrents().then(function(torrents: Shared.Services.Torrent[]){
+							$scope.torrents = torrents;
+						});										 						
+					}, 1500);
+					
+					$scope.$on("$stateChangeStart", function(){
+						$interval.cancel(stop);
+						stop = undefined;					
+					});					
+										 
 				}]
 			}); 				       	
 	}]);

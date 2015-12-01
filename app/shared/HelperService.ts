@@ -1,7 +1,7 @@
 /// <reference path="sharedModule.ts" />
 /// <reference path="../../typings/angularjs/angular.d.ts" />
 
-module Helper.Services {
+module Shared.Services {
 	
 	Number.prototype.toTruncFixed = function(place) {
 		var ret = Math.floor(this * Math.pow (10, place)) / Math.pow(10, place);
@@ -53,7 +53,7 @@ module Helper.Services {
 		/**
 		 * string representation of the estimated time until completetion
 		 */
-		private timeInterval = (seconds: number) => {
+		public timeInterval = (seconds: number) => {
 			var days    = Math.floor (seconds / 86400),
 			    hours   = Math.floor ((seconds % 86400) / 3600),
 			    minutes = Math.floor ((seconds % 3600) / 60),
@@ -81,7 +81,7 @@ module Helper.Services {
 			return s;
 		}
 
-		private timestamp = (seconds) => {
+		public timestamp = (seconds) => {
 			if (!seconds)
 				return 'N/A';
 
@@ -136,7 +136,7 @@ module Helper.Services {
 			return [date, time, period].join(' ');
 		}		
 		
-		private mem = (bytes: number) => {
+		public mem = (bytes: number) => {
 			if (bytes < this.mem_K) return [ bytes, this.mem_B_str ].join(' ');
 
 			var convertedSize;
@@ -161,7 +161,7 @@ module Helper.Services {
 			                              : [ convertedSize.toTruncFixed(1), unit ].join(' ');
 		}
 		
-		private size = (bytes: number) => 		{
+		public size = (bytes: number) => 		{
 			if (bytes < this.size_K) return [ bytes, this.size_B_str ].join(' ');
 
 			var convertedSize;
@@ -186,15 +186,15 @@ module Helper.Services {
 			                              : [ convertedSize.toTruncFixed(1), unit ].join(' ');
 		}
 		
-		private speedBps = (Bps) => {
+		public speedBps = (Bps) => {
 			return this.speed(this.toKBps(Bps));
 		}
 
-		private toKBps = (Bps) => {
+		public toKBps = (Bps) => {
 			return Math.floor(Bps / this.speed_K);
 		}
 		
-		private speed = (KBps: number) => {
+		public speed = (KBps: number) => {
 			var speed: any = KBps;
 
 			if (speed <= 999.95) // 0 KBps to 999 K
@@ -212,7 +212,7 @@ module Helper.Services {
 			return [ speed.toTruncFixed(2), this.speed_G_str ].join(' ');
 		}
 		
-		private percentString = (x) => {
+		public percentString = (x) => {
 			if (x < 10.0)
 				return x.toTruncFixed(2);
 			else if (x < 100.0)
@@ -221,7 +221,7 @@ module Helper.Services {
 				return x.toTruncFixed(0);
 		}
 
-		private ratioString = (x) => {
+		public ratioString = (x) => {
 			if (x === -1)
 				return "None";
 			if (x === -2)
