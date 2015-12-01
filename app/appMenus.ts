@@ -4,12 +4,28 @@
 (function (){
 	
 	angular.module("app").factory("app-menus", ["eehNavigation", function(eehNavigation){		
+		
+		// navbar
 		eehNavigation
-			// .menuItem('sidebar.torrents', {
-			// 	text: "Torrents",
-			// 	iconClass: 'fa fa-exchange',	
-			// 	isCollapsed: true		
+			// .menuItem("navbar.empty", {
+			// 	isVisible: false,
+			// 	weight: 1
 			// })
+			.menuItem("navbar.addTorrent", {
+				text: "Add torrent",
+				iconClass: "fa fa-upload",
+				weight: -2,
+				click: function() {alert("kita")}
+			})
+			.menuItem("navbar.pauseAll", {
+				text: "Pause all",
+				iconClass: "fa fa-pause-circle",
+				weight: -1,
+				click: function() {alert("pausing all")}
+			});			
+		
+		// sidebar
+		eehNavigation
 			.menuItem('sidebar.all', {
 				text: "All torrents",
 				state: "app.torrents",

@@ -17,8 +17,8 @@
       .eeh-navigation-sidebar > .navbar-collapse > ul.sidebar-nav > li > ul > li > ul > li > a {
         padding-left: 45px; }
   .eeh-navigation-sidebar .navbar-default > .active {
-    background-color: #CCC;
-    color: #CCC; }
+    background-color: #27A4CD;
+    color: #27A4CD; }
   .eeh-navigation-sidebar .sidebar-search .sidebar-search-input a {
     position: relative;
     display: block;
@@ -26,15 +26,15 @@
   .eeh-navigation-sidebar .sidebar-arrow {
     line-height: 1.5em; }
   .eeh-navigation-sidebar .sidebar-nav > li a {
-    color: #ccc; }
+    color: #27A4CD; }
     .eeh-navigation-sidebar .sidebar-nav > li a:hover, .eeh-navigation-sidebar .sidebar-nav > li a:focus {
       /*color: #333;*/
       background-color: #2f3334; }
   .eeh-navigation-sidebar .sidebar-nav > .active > a, .eeh-navigation-sidebar .sidebar-nav > .active > a:hover, .eeh-navigation-sidebar .sidebar-nav > .active > a:focus {
-    color: #ccc;
+    color: #27A4CD;
     background-color: #3F3F46; }
   .eeh-navigation-sidebar .sidebar-nav > .disabled > a, .eeh-navigation-sidebar .sidebar-nav > .disabled > a:hover, .eeh-navigation-sidebar .sidebar-nav > .disabled > a:focus {
-    color: #ccc;
+    color: #27A4CD;
     background-color: transparent; }
 
 @media (min-width: 768px) {
@@ -76,7 +76,7 @@
     position: inherit;
     margin: 0 0 0 250px;
     padding: 0 30px;
-    border-left: 1px solid #CCC; } }
+    border-left: 1px solid #27A4CD; } }
 .search-input-popover .navbar-form {
   padding: 0;
   margin: 0; }

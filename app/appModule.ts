@@ -7,7 +7,7 @@
 /// <reference path="shared/HelperService.ts" />
 
 (function(){	
-	var app = angular.module("app", ['ui.router', 'ui.bootstrap', 'eehNavigation', 'pascalprecht.translate', 'shared']);
+	var app = angular.module("app", ['ui.router', 'ui.bootstrap', 'eehNavigation', 'pascalprecht.translate', 'ng-context-menu', 'shared']);
 		
 	app.config(["$stateProvider", "$urlRouterProvider", "$translateProvider",
 		function($stateProvider: ng.ui.IStateProvider, $urlRouterProvider : ng.ui.IUrlRouterProvider, $translateProvider){			
@@ -33,9 +33,11 @@
 				template: '<torrent-list torrents="torrents"></torrent-list>',
 				controller: ["$scope", "TorrentService", "HelperService", function($scope: any, ts: Shared.Services.TorrentService, hp: Helper.Services.Helper){					
 					ts.getRecentlyActiveTorrents().then(function(torrents: Shared.Services.Torrent[]){
-						$scope.torrents = torrents.map(function(torrent: Shared.Services.Torrent){
-							return hp.prettyfyTorrent(torrent);
-						});	
+						// $scope.torrents = torrents.map(function(torrent: Shared.Services.Torrent){
+						// 	return hp.prettyfyTorrent(torrent);
+						// });	
+						console.log(torrents);
+						$scope.torrents = torrents;
 					})										 
 				}]
 			})

@@ -16,6 +16,18 @@ module.exports = function(app, rp){
 			}
 		};
 		
+		// var t = {
+		// 	result: "success",
+		// 	arguments: {
+		// 			torrents:[{"addedDate":"2015-11-29T20:12:16.000Z","error":0,"errorString":"","eta":"0 second","id":1,"isFinished":true,"isStalled":false,"leftUntilDone":"0 B","name":"Supernatural Season 01","peersConnected":11,"peersSendingToUs":0,"percentDone":"100","rateDownload":"0 kB/s",							"rateUpload":"9 kB/s","status":4,"totalSize":"7.71 GB"
+		// 			}, {"addedDate":"2015-11-29T20:12:16.000Z","error":0,"errorString":"","eta":"0 second","id":1,"isFinished":true,"isStalled":false,"leftUntilDone":"0 B","name":"Supernatural Season 01","peersConnected":11,"peersSendingToUs":0,"percentDone":"100","rateDownload":"0 kB/s",							"rateUpload":"9 kB/s","status":4,"totalSize":"7.71 GB"
+		// 			}, {"addedDate":"2015-11-29T20:12:16.000Z","error":0,"errorString":"","eta":"0 second","id":1,"isFinished":true,"isStalled":false,"leftUntilDone":"0 B","name":"Supernatural Season 01","peersConnected":11,"peersSendingToUs":0,"percentDone":"100","rateDownload":"0 kB/s",							"rateUpload":"9 kB/s","status":4,"totalSize":"7.71 GB"
+		// 			}]
+		// 		}
+		// 	
+		// } ;
+		// res.send(t);
+		
 		rp(options).then(function success(response){
 			
 		}, function error(err) {

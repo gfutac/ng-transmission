@@ -314,7 +314,7 @@ var Helper;
 /// <reference path="components/torrents/torrentsService.ts" />
 /// <reference path="shared/HelperService.ts" />
 (function () {
-    var app = angular.module("app", ['ui.router', 'ui.bootstrap', 'eehNavigation', 'pascalprecht.translate', 'shared']);
+    var app = angular.module("app", ['ui.router', 'ui.bootstrap', 'eehNavigation', 'pascalprecht.translate', 'ng-context-menu', 'shared']);
     app.config(["$stateProvider", "$urlRouterProvider", "$translateProvider",
         function ($stateProvider, $urlRouterProvider, $translateProvider) {
             // sanitaze html (escape)
@@ -335,9 +335,11 @@ var Helper;
                 template: '<torrent-list torrents="torrents"></torrent-list>',
                 controller: ["$scope", "TorrentService", "HelperService", function ($scope, ts, hp) {
                         ts.getRecentlyActiveTorrents().then(function (torrents) {
-                            $scope.torrents = torrents.map(function (torrent) {
-                                return hp.prettyfyTorrent(torrent);
-                            });
+                            // $scope.torrents = torrents.map(function(torrent: Shared.Services.Torrent){
+                            // 	return hp.prettyfyTorrent(torrent);
+                            // });	
+                            console.log(torrents);
+                            $scope.torrents = torrents;
                         });
                     }]
             })
@@ -367,6 +369,21 @@ var Helper;
 /// <reference path="appModule.ts" />
 (function () {
     angular.module("app").factory("app-menus", ["eehNavigation", function (eehNavigation) {
+            // navbar
+            eehNavigation
+                .menuItem("navbar.addTorrent", {
+                text: "Add torrent",
+                iconClass: "fa fa-upload",
+                weight: -2,
+                click: function () { alert("kita"); }
+            })
+                .menuItem("navbar.pauseAll", {
+                text: "Pause all",
+                iconClass: "fa fa-pause-circle",
+                weight: -1,
+                click: function () { alert("pausing all"); }
+            });
+            // sidebar
             eehNavigation
                 .menuItem('sidebar.all', {
                 text: "All torrents",
@@ -397,9 +414,18 @@ var Helper;
                     torrent: "=",
                 },
                 replace: true,
-                templateUrl: "app/components/torrents/torrent.html",
+                templateUrl: "app/components/torrents/layouts/torrent.html",
                 link: function (scope, element, attributes) {
-                }
+                },
+                controller: ["$scope", function ($scope) {
+                        var torrent = $scope.torrent;
+                        $scope.hasError = torrent.error !== 0 || torrent.errorString !== "";
+                        $scope.isDownloading = torrent.status === 4;
+                        $scope.isSeeding = torrent.status === 6;
+                        $scope.percentDone = torrent.percentDone;
+                        $scope.eta = torrent.eta;
+                        $scope.totalSize = torrent.totalSize;
+                    }]
             };
         }]);
 })();
@@ -415,7 +441,7 @@ var Helper;
                 },
                 transclude: true,
                 replace: true,
-                templateUrl: 'app/components/torrents/torrentList.html',
+                templateUrl: 'app/components/torrents/layouts/torrentList.html',
             };
         }]);
 })();

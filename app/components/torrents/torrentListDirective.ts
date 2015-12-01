@@ -11,7 +11,7 @@
 				},
 				transclude: true,
 				replace: true,
-				templateUrl: 'app/components/torrents/torrentList.html',
+				templateUrl: 'app/components/torrents/layouts/torrentList.html',
 			}		
 		}]);	
 })();
