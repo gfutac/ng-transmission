@@ -74,7 +74,7 @@ module Shared.Services {
 					
 					$scope.login = () => {
 						if (!$scope.user.username) {
-                            $scope.messageClass = " alert-warning";
+                            $scope.messageClass = "alert-warning";
                             $scope.statusMessage = "Please enter username.";
                             return;
                         }
@@ -86,16 +86,18 @@ module Shared.Services {
 								'Content-Type': 'application/json',
 								'Authorization': "Basic " + btoa($scope.user.username + ":" + $scope.user.password)
 							}
-						}).then(function success(response){
-							console.log("success");
-							console.log(response)
-						}, function error(response){
-							console.log("error")
-							console.log(response)
-						})
-						
-						self.auth = "Basic " + btoa($scope.user.username + ":" + $scope.user.password);
-						$scope.$close(self.auth);			
+						}).then(function success(response: any){
+							var statusCode = response.data.statusCode;
+							if (statusCode === 200){
+								self.auth = "Basic " + btoa($scope.user.username + ":" + $scope.user.password);		
+								$scope.$close(self.auth);							
+							} else {
+                                $scope.messageClass = "alert-danger";
+                                $scope.statusMessage = "Login failed.";
+							}
+						}).finally(function(){
+							$scope.isBusy = false;
+						})							
 					}
 					
 					$scope.cancel = function () {
