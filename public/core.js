@@ -332,7 +332,8 @@ var Shared;
                 this.storeUserData = function (username, password) {
                     var combined = username + ":" + password;
                     var encoded = "Basic " + btoa(combined);
-                    _this.$window.localStorage.setItem("auth_token", encoded);
+                    _this.auth = encoded;
+                    _this.$window.localStorage.setItem("auth_token", _this.auth);
                     _this.$http.defaults.headers["Authorization"] = _this.auth;
                 };
                 this.storeXSessionId = function (sessionid) {
@@ -366,6 +367,7 @@ var Shared;
                                     }
                                     $scope.isBusy = true;
                                     self.storeUserData($scope.user.username, $scope.user.password);
+                                    $scope.$close(self.auth);
                                 };
                                 $scope.cancel = function () {
                                     $scope.$dismiss();
