@@ -5,6 +5,7 @@
 /// <reference path="components/torrents/rpcService.ts" />
 /// <reference path="components/torrents/torrentsService.ts" />
 /// <reference path="shared/HelperService.ts" />
+/// <reference path="shared/userService.ts" />
 
 (function(){	
 	var app = angular.module("app", ['ui.router', 'ui.bootstrap', 'eehNavigation', 'pascalprecht.translate', 'ng-context-menu', 'shared']);

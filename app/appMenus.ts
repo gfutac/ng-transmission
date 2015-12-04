@@ -3,7 +3,7 @@
 
 (function (){
 	
-	angular.module("app").factory("app-menus", ["eehNavigation", function(eehNavigation){		
+	angular.module("app").factory("app-menus", ["eehNavigation", "UserService", function(eehNavigation, userService: Shared.Services.UserService){		
 		
 		// navbar
 		eehNavigation
@@ -11,7 +11,9 @@
 				text: "User",
 				iconClass: "fa fa-user",
 				weight: 1,
-				click: function(){alert("set user data")}
+				click: function(){
+					userService.shoLoginWindow();
+				}
 			})
 			.menuItem("navbar.addTorrent", {
 				text: "Add torrent",
@@ -23,7 +25,9 @@
 				text: "Pause all",
 				iconClass: "fa fa-pause-circle",
 				weight: -1,
-				click: function() {alert("pausing all")}
+				click: function() {
+					
+				}
 			});			
 		
 		// sidebar

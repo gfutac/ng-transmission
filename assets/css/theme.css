@@ -77,3 +77,11 @@ body{
 	color: #ccc;
 	font-size: 12px;
 }
+
+.login-dialog-window .modal-dialog {
+  width: 350px;
+}
+
+.modal-content {
+	background-color: #3F3F46;
+}

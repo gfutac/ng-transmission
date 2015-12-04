@@ -21,7 +21,6 @@ var Shared;
                     };
                     _this.$http.post('/transmission/rpc', data, {
                         headers: {
-                            'Authorization': 'Basic Z29yYW46Y2FuZXN0ZW4=',
                             'Content-Type': 'application/json',
                         }
                     }).
@@ -57,7 +56,7 @@ var Shared;
             FilterEnum[FilterEnum["Seeding"] = 4] = "Seeding";
         })(FilterEnum || (FilterEnum = {}));
         var TorrentService = (function () {
-            function TorrentService(rpc, $q) {
+            function TorrentService(rpc, $q, us) {
                 var _this = this;
                 this.torrents = [];
                 this.torrentFilters = {};
@@ -65,9 +64,12 @@ var Shared;
                     var filterFunc = _this.torrentFilters[filterType];
                     var deferred = _this.$q.defer();
                     _this.rpc.getTorrents().then(function (response) {
+                        if (angular.isDefined(response["token"])) {
+                            _this.us.storeXSessionId(response["token"]);
+                        }
                         if (response.data.result === "success") {
-                            this.torrents = response.data.arguments.torrents.filter(filterFunc);
-                            deferred.resolve(this.torrents);
+                            _this.torrents = response.data.arguments.torrents.filter(filterFunc);
+                            deferred.resolve(_this.torrents);
                         }
                         else {
                             deferred.reject({ msg: "Something wrong happened." });
@@ -88,12 +90,13 @@ var Shared;
                 };
                 this.rpc = rpc;
                 this.$q = $q;
+                this.us = us;
                 this.torrentFilters[FilterEnum.All] = function (torrent) { return true; };
                 this.torrentFilters[FilterEnum.Stopped] = function (torrent) { return torrent.status === 0; };
                 this.torrentFilters[FilterEnum.Downloading] = function (torrent) { return torrent.status === 4; };
                 this.torrentFilters[FilterEnum.Seeding] = function (torrent) { return torrent.status === 6; };
             }
-            TorrentService.$inject = ["RpcService", "$q"];
+            TorrentService.$inject = ["RpcService", "$q", "UserService"];
             return TorrentService;
         })();
         Services.TorrentService = TorrentService;
@@ -307,12 +310,87 @@ var Shared;
         angular.module("shared").service("HelperService", Helper);
     })(Services = Shared.Services || (Shared.Services = {}));
 })(Shared || (Shared = {}));
+/// <reference path="sharedModule.ts" />
+/// <reference path="../../typings/angularjs/angular.d.ts" />
+/// <reference path="../../typings/angularjs/angular-ui-bootstrap.d.ts" />
+var Shared;
+(function (Shared) {
+    var Services;
+    (function (Services) {
+        var UserService = (function () {
+            function UserService($window, $modal, $http) {
+                var _this = this;
+                this.auth = null;
+                this.storeUserData = function (username, password) {
+                    var combined = username + ":" + password;
+                    var encoded = "Basic " + btoa(combined);
+                    _this.$window.localStorage.setItem("auth_token", encoded);
+                    _this.$http.defaults.headers["Authorization"] = _this.auth;
+                };
+                this.storeXSessionId = function (sessionid) {
+                    _this.$window.localStorage.setItem("X-transmission-session-id", sessionid);
+                    _this.$http.defaults.headers["X-transmission-session-id"] = sessionid;
+                };
+                this.logout = function () {
+                    _this.auth = null;
+                    _this.$window.localStorage.removeItem("auth_token");
+                    delete _this.$http.defaults.headers["Authorization"];
+                };
+                this.clearXSessionId = function () {
+                    _this.$window.localStorage.removeItem("X-transmission-session-id");
+                    delete _this.$http.defaults.headers["X-transmission-session-id"];
+                };
+                this.shoLoginWindow = function () {
+                    if (_this.loginModalInstancePromise)
+                        return _this.loginModalInstancePromise;
+                    _this.logout();
+                    _this.loginModalInstance = _this.$modal.open({
+                        windowClass: "login-dialog-window",
+                        templateUrl: "app/shared/layouts/login.html",
+                        controller: ["$scope", function ($scope) {
+                                var _this = this;
+                                $scope.user = {};
+                                $scope.login = function () {
+                                    if (!$scope.user.username) {
+                                        $scope.messageClass = " alert-warning";
+                                        $scope.statusMessage = "Please enter username.";
+                                        return;
+                                    }
+                                    $scope.isBusy = true;
+                                    _this.storeUserData($scope.user.username, $scope.user.password);
+                                };
+                                $scope.cancel = function () {
+                                    $scope.$dismiss();
+                                };
+                            }]
+                    });
+                };
+                this.$window = $window;
+                this.$modal = $modal;
+                this.$http = $http;
+                try {
+                    this.auth = this.$window.localStorage.getItem("auth_token");
+                    if (this.auth) {
+                        this.$http.defaults.headers["Authorization"] = this.auth;
+                    }
+                }
+                catch (e) {
+                }
+            }
+            UserService.$inject = ["$window", "$modal", "$http"];
+            return UserService;
+        })();
+        Services.UserService = UserService;
+        angular.module("shared").service("UserService", UserService);
+    })(Services = Shared.Services || (Shared.Services = {}));
+})(Shared || (Shared = {}));
 /// <reference path="../typings/angularjs/angular.d.ts" />
 /// <reference path="../typings/angularjs/angular-ui-router.d.ts" />
 /// <reference path="shared/sharedModule.ts" />
 /// <reference path="components/torrents/rpcService.ts" />
 /// <reference path="components/torrents/torrentsService.ts" />
 /// <reference path="shared/HelperService.ts" />
+/// <reference path="shared/userService.ts" />
 (function () {
     var app = angular.module("app", ['ui.router', 'ui.bootstrap', 'eehNavigation', 'pascalprecht.translate', 'ng-context-menu', 'shared']);
     app.config(["$stateProvider", "$urlRouterProvider", "$translateProvider",
@@ -391,14 +469,16 @@ var Shared;
 /// <reference path="../typings/angularjs/angular.d.ts" />
 /// <reference path="appModule.ts" />
 (function () {
-    angular.module("app").factory("app-menus", ["eehNavigation", function (eehNavigation) {
+    angular.module("app").factory("app-menus", ["eehNavigation", "UserService", function (eehNavigation, userService) {
             // navbar
             eehNavigation
                 .menuItem("navbar.user", {
                 text: "User",
                 iconClass: "fa fa-user",
                 weight: 1,
-                click: function () { alert("set user data"); }
+                click: function () {
+                    userService.shoLoginWindow();
+                }
             })
                 .menuItem("navbar.addTorrent", {
                 text: "Add torrent",
@@ -410,7 +490,8 @@ var Shared;
                 text: "Pause all",
                 iconClass: "fa fa-pause-circle",
                 weight: -1,
-                click: function () { alert("pausing all"); }
+                click: function () {
+                }
             });
             // sidebar
             eehNavigation

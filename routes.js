@@ -16,6 +16,10 @@ module.exports = function(app, rp){
 			}
 		};
 		
+		if (req.headers["x-transmission-session-id"]){
+			options.headers["X-transmission-session-id"] = req.headers['x-transmission-session-id'];
+		}
+		
 		// var t = {
 		// 	result: "success",
 		// 	arguments: {
@@ -29,7 +33,7 @@ module.exports = function(app, rp){
 		// res.send(t);
 		
 		rp(options).then(function success(response){
-			
+			var k = 0;
 		}, function error(err) {
 			if (err.statusCode === 409){
 				var token = err.response.headers['x-transmission-session-id'];
@@ -40,6 +44,7 @@ module.exports = function(app, rp){
 				options.body = res.req.body;
 								
 				rp(options).then(function(transmissionResponse){
+					transmissionResponse["token"] = token;
 					res.send(transmissionResponse);
 				})
 			}

@@ -10,8 +10,8 @@ module Shared.Services {
 	}
 	
 	export class RpcService {
-		private $http: ng.IHttpService;
-		private $q: ng.IQService;
+		private $http: angular.IHttpService;
+		private $q: angular.IQService;
 		
 		static $inject = ["$http", "$q"];
 		
@@ -34,7 +34,6 @@ module Shared.Services {
 			
 			this.$http.post('/transmission/rpc', data, {
 				headers: {
-					'Authorization': 'Basic Z29yYW46Y2FuZXN0ZW4=',
 					'Content-Type': 'application/json',
 				}
 			}).

@@ -33,14 +33,16 @@ module Shared.Services {
 	export class TorrentService{
 		private torrents: Torrent[] = [];
 		private rpc: Shared.Services.RpcService;
-		private $q: ng.IQService;		
+		private us: Shared.Services.UserService;
+		private $q: angular.IQService;		
 		private torrentFilters: { [filterType: number]: (torrent: Torrent) => boolean } = {};
 			
-		static $inject = ["RpcService", "$q"]			
+		static $inject = ["RpcService", "$q", "UserService"]			
 			
-		constructor(rpc, $q) {
+		constructor(rpc, $q, us) {
 			this.rpc = rpc;
 			this.$q = $q;
+			this.us = us;
 			
 			this.torrentFilters[FilterEnum.All] = function(torrent: Torrent) { return true; };
 			this.torrentFilters[FilterEnum.Stopped] = function(torrent: Torrent) { return torrent.status === 0; };
@@ -53,7 +55,11 @@ module Shared.Services {
 			
 			var deferred = this.$q.defer();
 			
-			this.rpc.getTorrents().then(function(response){
+			this.rpc.getTorrents().then((response: any) => {
+				if (angular.isDefined(response["token"])){
+					this.us.storeXSessionId(response["token"]);
+				}
+				
 				if (response.data.result === "success"){
 					this.torrents = response.data.arguments.torrents.filter(filterFunc);																			
 					deferred.resolve(this.torrents);					
