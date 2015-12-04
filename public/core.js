@@ -361,7 +361,8 @@ var Shared;
                                     $scope.isBusy = true;
                                     self.$http.post("/transmission/rpc/login", {}, {
                                         headers: {
-                                            'Content-Type': 'application/json'
+                                            'Content-Type': 'application/json',
+                                            'Authorization': "Basic " + btoa($scope.user.username + ":" + $scope.user.password)
                                         }
                                     }).then(function success(response) {
                                         var l = 0;
