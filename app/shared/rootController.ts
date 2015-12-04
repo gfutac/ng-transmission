@@ -2,7 +2,7 @@
 module Shared{
 	class RootController{
 		
-		static $inject = ["$rootScope", "$state", "userService", "appMenus"];
+		static $inject = ["$rootScope", "$state", "UserService", "appMenus"];
 		
 		constructor($rootScope, $state: angular.ui.IStateService, userService: Shared.Services.UserService, appMenus){
             $rootScope.$on('$stateChangeStart',
