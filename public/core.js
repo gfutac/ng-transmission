@@ -354,7 +354,7 @@ var Shared;
                                 $scope.user = {};
                                 $scope.login = function () {
                                     if (!$scope.user.username) {
-                                        $scope.messageClass = " alert-warning";
+                                        $scope.messageClass = "alert-warning";
                                         $scope.statusMessage = "Please enter username.";
                                         return;
                                     }
@@ -365,14 +365,18 @@ var Shared;
                                             'Authorization': "Basic " + btoa($scope.user.username + ":" + $scope.user.password)
                                         }
                                     }).then(function success(response) {
-                                        console.log("success");
-                                        console.log(response);
-                                    }, function error(response) {
-                                        console.log("error");
-                                        console.log(response);
+                                        var statusCode = response.data.statusCode;
+                                        if (statusCode === 200) {
+                                            self.auth = "Basic " + btoa($scope.user.username + ":" + $scope.user.password);
+                                            $scope.$close(self.auth);
+                                        }
+                                        else {
+                                            $scope.messageClass = "alert-danger";
+                                            $scope.statusMessage = "Login failed.";
+                                        }
+                                    }).finally(function () {
+                                        $scope.isBusy = false;
                                     });
-                                    self.auth = "Basic " + btoa($scope.user.username + ":" + $scope.user.password);
-                                    $scope.$close(self.auth);
                                 };
                                 $scope.cancel = function () {
                                     $scope.$dismiss();
