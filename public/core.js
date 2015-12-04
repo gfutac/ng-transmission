@@ -61,22 +61,27 @@ var Shared;
                 this.torrents = [];
                 this.torrentFilters = {};
                 this.getAndFilterTorrents = function (filterType) {
-                    var filterFunc = _this.torrentFilters[filterType];
                     var deferred = _this.$q.defer();
-                    _this.rpc.getTorrents().then(function (response) {
-                        if (angular.isDefined(response["token"])) {
-                            _this.us.storeXSessionId(response["token"]);
-                        }
-                        if (response.data.result === "success") {
-                            _this.torrents = response.data.arguments.torrents.filter(filterFunc);
-                            deferred.resolve(_this.torrents);
-                        }
-                        else {
-                            deferred.reject({ msg: "Something wrong happened." });
-                        }
-                    }, function (err) {
-                        deferred.reject(err);
-                    });
+                    if (!_this.us.isLoggedIn()) {
+                        _this.us.shoLoginWindow();
+                    }
+                    else {
+                        var filterFunc = _this.torrentFilters[filterType];
+                        _this.rpc.getTorrents().then(function (response) {
+                            if (angular.isDefined(response["token"])) {
+                                _this.us.storeXSessionId(response["token"]);
+                            }
+                            if (response.data.result === "success") {
+                                _this.torrents = response.data.arguments.torrents.filter(filterFunc);
+                                deferred.resolve(_this.torrents);
+                            }
+                            else {
+                                deferred.reject({ msg: "Something wrong happened." });
+                            }
+                        }, function (err) {
+                            deferred.reject(err);
+                        });
+                    }
                     return deferred.promise;
                 };
                 this.getRecentlyActiveTorrents = function () {
@@ -321,6 +326,9 @@ var Shared;
             function UserService($window, $modal, $http) {
                 var _this = this;
                 this.auth = null;
+                this.isLoggedIn = function () {
+                    return angular.isDefined(_this.auth);
+                };
                 this.storeUserData = function (username, password) {
                     var combined = username + ":" + password;
                     var encoded = "Basic " + btoa(combined);
@@ -341,14 +349,14 @@ var Shared;
                     delete _this.$http.defaults.headers["X-transmission-session-id"];
                 };
                 this.shoLoginWindow = function () {
-                    if (_this.loginModalInstancePromise)
-                        return _this.loginModalInstancePromise;
-                    _this.logout();
-                    _this.loginModalInstance = _this.$modal.open({
+                    var self = _this;
+                    if (self.loginModalInstancePromise)
+                        return self.loginModalInstancePromise;
+                    self.logout();
+                    self.loginModalInstance = self.$modal.open({
                         windowClass: "login-dialog-window",
                         templateUrl: "app/shared/layouts/login.html",
                         controller: ["$scope", function ($scope) {
-                                var _this = this;
                                 $scope.user = {};
                                 $scope.login = function () {
                                     if (!$scope.user.username) {
@@ -356,8 +364,8 @@ var Shared;
                                         $scope.statusMessage = "Please enter username.";
                                         return;
                                     }
-                                    $scope.isBusy = true;
-                                    _this.storeUserData($scope.user.username, $scope.user.password);
+                                    // $scope.isBusy = true;
+                                    self.storeUserData($scope.user.username, $scope.user.password);
                                 };
                                 $scope.cancel = function () {
                                     $scope.$dismiss();

@@ -34,6 +34,10 @@ module Shared.Services {
 			}
 		}
 		
+		public isLoggedIn = (): boolean => {
+			return angular.isDefined(this.auth);
+		}
+		
 		public storeUserData = (username: string, password: string) => {
 			var combined = username + ":" + password;
 			var encoded = "Basic " + btoa(combined);
@@ -58,11 +62,12 @@ module Shared.Services {
 		}
 		
 		public shoLoginWindow = () => {
-			if (this.loginModalInstancePromise) return this.loginModalInstancePromise;
-			this.logout();
-			
 			var self = this;
-			this.loginModalInstance = this.$modal.open({
+			
+			if (self.loginModalInstancePromise) return self.loginModalInstancePromise;
+			self.logout();
+			
+			self.loginModalInstance = self.$modal.open({
 				windowClass:"login-dialog-window",
 				templateUrl: "app/shared/layouts/login.html",
 				controller: ["$scope", function($scope){
@@ -75,7 +80,7 @@ module Shared.Services {
                             return;
                         }
 						
-						$scope.isBusy = true;
+						// $scope.isBusy = true;
 						
 						self.storeUserData($scope.user.username, $scope.user.password);						
 					}
