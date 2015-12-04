@@ -41,7 +41,8 @@ module Shared.Services {
 		public storeUserData = (username: string, password: string) => {
 			var combined = username + ":" + password;
 			var encoded = "Basic " + btoa(combined);
-			this.$window.localStorage.setItem("auth_token", encoded);
+			this.auth = encoded;
+			this.$window.localStorage.setItem("auth_token", this.auth);
 			this.$http.defaults.headers["Authorization"] = this.auth;
 		}
 		
