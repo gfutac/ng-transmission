@@ -324,10 +324,8 @@ var Shared;
                 this.isLoggedIn = function () {
                     return !!_this.auth;
                 };
-                this.storeUserData = function (username, password) {
-                    var combined = username + ":" + password;
-                    var encoded = "Basic " + btoa(combined);
-                    _this.auth = encoded;
+                this.storeUserData = function (token) {
+                    _this.auth = token;
                     _this.$window.localStorage.setItem("auth_token", _this.auth);
                     _this.$http.defaults.headers.common["Authorization"] = _this.auth;
                 };
@@ -361,7 +359,7 @@ var Shared;
                                         return;
                                     }
                                     $scope.isBusy = true;
-                                    self.storeUserData($scope.user.username, $scope.user.password);
+                                    self.auth = "Basic " + btoa($scope.user.username + ":" + $scope.user.password);
                                     $scope.$close(self.auth);
                                 };
                                 $scope.cancel = function () {
@@ -370,7 +368,7 @@ var Shared;
                             }]
                     });
                     _this.loginModalInstancePromise = self.loginModalInstance.result.then(function (data) {
-                        var k = 0;
+                        self.storeUserData(data);
                     }).finally(function () {
                         self.loginModalInstance = undefined;
                         self.loginModalInstancePromise = undefined;

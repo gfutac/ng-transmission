@@ -38,10 +38,8 @@ module Shared.Services {
 			return !!this.auth;
 		}
 		
-		public storeUserData = (username: string, password: string) => {
-			var combined = username + ":" + password;
-			var encoded = "Basic " + btoa(combined);
-			this.auth = encoded;
+		public storeUserData = (token: any) => {
+			this.auth = token;
 			this.$window.localStorage.setItem("auth_token", this.auth);
 			this.$http.defaults.headers.common["Authorization"] = this.auth;
 		}
@@ -82,8 +80,8 @@ module Shared.Services {
                         }
 						
 						$scope.isBusy = true;
-						
-						self.storeUserData($scope.user.username, $scope.user.password);			
+						self.auth = "Basic " + btoa($scope.user.username + ":" + $scope.user.password);
+	
 						$scope.$close(self.auth);			
 					}
 					
@@ -94,7 +92,7 @@ module Shared.Services {
 			});
 			
 			this.loginModalInstancePromise = self.loginModalInstance.result.then(function(data){
-				var k = 0;
+				self.storeUserData(data);
 			}).finally(function(){
 				self.loginModalInstance = undefined;
 				self.loginModalInstancePromise = undefined;   
