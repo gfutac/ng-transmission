@@ -61,6 +61,7 @@ module Shared.Services {
 			if (this.loginModalInstancePromise) return this.loginModalInstancePromise;
 			this.logout();
 			
+			var self = this;
 			this.loginModalInstance = this.$modal.open({
 				windowClass:"login-dialog-window",
 				templateUrl: "app/shared/layouts/login.html",
@@ -76,7 +77,7 @@ module Shared.Services {
 						
 						$scope.isBusy = true;
 						
-						this.storeUserData($scope.user.username, $scope.user.password);						
+						self.storeUserData($scope.user.username, $scope.user.password);						
 					}
 					
 					$scope.cancel = function () {
