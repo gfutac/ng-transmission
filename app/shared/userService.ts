@@ -87,9 +87,11 @@ module Shared.Services {
 								'Authorization': "Basic " + btoa($scope.user.username + ":" + $scope.user.password)
 							}
 						}).then(function success(response){
-							var l  = 0;
+							console.log("success");
+							console.log(response)
 						}, function error(response){
-							var k = 0;
+							console.log("error")
+							console.log(response)
 						})
 						
 						self.auth = "Basic " + btoa($scope.user.username + ":" + $scope.user.password);
