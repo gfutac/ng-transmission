@@ -82,7 +82,8 @@ module Shared.Services {
 						
 						$scope.isBusy = true;
 						
-						self.storeUserData($scope.user.username, $scope.user.password);						
+						self.storeUserData($scope.user.username, $scope.user.password);			
+						$scope.$close(self.auth);			
 					}
 					
 					$scope.cancel = function () {
