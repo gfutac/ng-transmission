@@ -26,7 +26,7 @@ module Shared.Services {
 			
 			var data = {  
 				"arguments":{
-					"fields": [ "id", "name", "status", "error", "errorString", "isFinished", "isStalled", "addedDate", "eta", "rateDownload", "rateUpload", "percentDone", "peersSendingToUs",  "peersConnected", "totalSize", "leftUntilDone"],
+					"fields": [ "id", "name", "status", "error", "errorString", "isFinished", "isStalled", "addedDate", "eta", "rateDownload", "rateUpload", "percentDone", "peersSendingToUs", "peersGettingFromUs",  "peersConnected", "totalSize", "leftUntilDone", "uploadedEver"],
 					"ids": "recently-active"
 				},
 				"method": "torrent-get"

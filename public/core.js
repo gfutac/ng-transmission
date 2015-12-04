@@ -14,7 +14,7 @@ var Shared;
                     var deferred = _this.$q.defer();
                     var data = {
                         "arguments": {
-                            "fields": ["id", "name", "status", "error", "errorString", "isFinished", "isStalled", "addedDate", "eta", "rateDownload", "rateUpload", "percentDone", "peersSendingToUs", "peersConnected", "totalSize", "leftUntilDone"],
+                            "fields": ["id", "name", "status", "error", "errorString", "isFinished", "isStalled", "addedDate", "eta", "rateDownload", "rateUpload", "percentDone", "peersSendingToUs", "peersGettingFromUs", "peersConnected", "totalSize", "leftUntilDone", "uploadedEver"],
                             "ids": "recently-active"
                         },
                         "method": "torrent-get"
@@ -578,6 +578,7 @@ var Shared;
                         $scope.torrent.eta = hp.timeInterval($scope.torrent.eta);
                         $scope.torrent.downloadedSize = hp.size(torrent.totalSize - torrent.leftUntilDone);
                         $scope.torrent.totalSize = hp.size(torrent.totalSize);
+                        $scope.torrent.uploadedEver = hp.size(torrent.uploadedEver);
                     }]
             };
         }]);

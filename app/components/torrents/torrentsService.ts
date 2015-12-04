@@ -21,6 +21,7 @@ module Shared.Services {
 		peersConnected?: number;
 		totalSize?: number;
 		leftUntilDone?: number;
+		uploadedEver?: number;
 	}
 	
 	enum FilterEnum {

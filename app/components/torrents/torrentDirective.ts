@@ -29,7 +29,8 @@
 					
 					$scope.torrent.eta = hp.timeInterval($scope.torrent.eta);	
 					$scope.torrent.downloadedSize = hp.size(torrent.totalSize - torrent.leftUntilDone);
-					$scope.torrent.totalSize = hp.size(torrent.totalSize);	
+					$scope.torrent.totalSize = hp.size(torrent.totalSize);
+					$scope.torrent.uploadedEver = hp.size(torrent.uploadedEver)
 				}]
 			};
 		}]);
