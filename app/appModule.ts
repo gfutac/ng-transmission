@@ -33,24 +33,24 @@
 				url: "/torrents",
 				template: '<torrent-list torrents="torrents"></torrent-list>',
 				controller: ["$scope", "$interval", "TorrentService", "UserService", function($scope: any, $interval: any, ts: Shared.Services.TorrentService, us: Shared.Services.UserService){
-					if (us.isLoggedIn()){
+					if (!us.isLoggedIn()){
+						us.shoLoginWindow();	
+					}
+					
+					ts.getRecentlyActiveTorrents().then(function(torrents: Shared.Services.Torrent[]){
+						$scope.torrents = torrents;												
+					});
+																				
+					var stop = $interval(function(){
 						ts.getRecentlyActiveTorrents().then(function(torrents: Shared.Services.Torrent[]){
-							$scope.torrents = torrents;												
-						});
-																					
-						var stop = $interval(function(){
-							ts.getRecentlyActiveTorrents().then(function(torrents: Shared.Services.Torrent[]){
-								$scope.torrents = torrents;
-							});										 						
-						}, 1500);
-											
-						$scope.$on("$stateChangeStart", function(){
-							$interval.cancel(stop);
-							stop = undefined;					
-						});						
-					} else {
-						us.shoLoginWindow();						
-					}										
+							$scope.torrents = torrents;
+						});										 						
+					}, 1500);
+										
+					$scope.$on("$stateChangeStart", function(){
+						$interval.cancel(stop);
+						stop = undefined;					
+					});															
 				}]
 			})
 			.state({

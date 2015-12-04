@@ -93,14 +93,14 @@ module Shared.Services {
 				}]
 			});
 			
-			this.loginModalInstancePromise = self.loginModalInstance.result.then(function(){
-				
+			this.loginModalInstancePromise = self.loginModalInstance.result.then(function(data){
+				var k = 0;
 			}).finally(function(){
 				self.loginModalInstance = undefined;
 				self.loginModalInstancePromise = undefined;   
 			});
 			
-														
+			return self.loginModalInstancePromise;											
 		}
 	}
 	

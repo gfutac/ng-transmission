@@ -369,11 +369,13 @@ var Shared;
                                 };
                             }]
                     });
-                    _this.loginModalInstancePromise = self.loginModalInstance.result.then(function () {
+                    _this.loginModalInstancePromise = self.loginModalInstance.result.then(function (data) {
+                        var k = 0;
                     }).finally(function () {
                         self.loginModalInstance = undefined;
                         self.loginModalInstancePromise = undefined;
                     });
+                    return self.loginModalInstancePromise;
                 };
                 this.$window = $window;
                 this.$modal = $modal;
@@ -422,23 +424,21 @@ var Shared;
                 url: "/torrents",
                 template: '<torrent-list torrents="torrents"></torrent-list>',
                 controller: ["$scope", "$interval", "TorrentService", "UserService", function ($scope, $interval, ts, us) {
-                        if (us.isLoggedIn()) {
+                        if (!us.isLoggedIn()) {
+                            us.shoLoginWindow();
+                        }
+                        ts.getRecentlyActiveTorrents().then(function (torrents) {
+                            $scope.torrents = torrents;
+                        });
+                        var stop = $interval(function () {
                             ts.getRecentlyActiveTorrents().then(function (torrents) {
                                 $scope.torrents = torrents;
                             });
-                            var stop = $interval(function () {
-                                ts.getRecentlyActiveTorrents().then(function (torrents) {
-                                    $scope.torrents = torrents;
-                                });
-                            }, 1500);
-                            $scope.$on("$stateChangeStart", function () {
-                                $interval.cancel(stop);
-                                stop = undefined;
-                            });
-                        }
-                        else {
-                            us.shoLoginWindow();
-                        }
+                        }, 1500);
+                        $scope.$on("$stateChangeStart", function () {
+                            $interval.cancel(stop);
+                            stop = undefined;
+                        });
                     }]
             })
                 .state({
