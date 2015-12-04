@@ -414,7 +414,7 @@ var Shared;
                 name: "app",
                 abstract: true,
                 templateUrl: "app/layout.html",
-                controller: "root-controller"
+                controller: ["appMenus", function (appMenus) { }]
             })
                 .state({
                 name: "app.torrents",
@@ -472,6 +472,20 @@ var Shared;
                             stop = undefined;
                         });
                     }]
+            });
+        }]);
+    app.run(["$rootScope", "UserService", "$state", function ($rootScope, userService, $state) {
+            $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+                if (fromState.name === "") {
+                    console.log("initial state");
+                }
+                console.log(fromState.name + "->" + toState.name);
+                if (!userService.isLoggedIn()) {
+                    event.preventDefault();
+                    userService.shoLoginWindow().then(function () {
+                        $state.go(toState.name, toParams);
+                    });
+                }
             });
         }]);
 })();
@@ -569,23 +583,4 @@ var Shared;
             };
         }]);
 })();
-var Shared;
-(function (Shared) {
-    var RootController = (function () {
-        function RootController($rootScope, $state, userService, appMenus) {
-            $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
-                console.log(fromState.name + "->" + toState.name);
-                if (!userService.isLoggedIn()) {
-                    event.preventDefault();
-                    userService.shoLoginWindow().then(function () {
-                        $state.go(toState.name, toParams);
-                    });
-                }
-            });
-        }
-        RootController.$inject = ["$rootScope", "$state", "UserService", "appMenus"];
-        return RootController;
-    })();
-    angular.module("shared").controller("root-controller", RootController);
-})(Shared || (Shared = {}));
 //# sourceMappingURL=core.js.map

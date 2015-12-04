@@ -24,7 +24,7 @@
 				name: "app",
 				abstract: true,
 				templateUrl: "app/layout.html",
-				controller: "root-controller"
+				controller: ["appMenus", function (appMenus) {}]
 			})	
 			.state({
 				name: "app.torrents",
@@ -93,5 +93,23 @@
 										 
 				}]
 			}); 				       	
+	}]);
+	
+	app.run(["$rootScope", "UserService", "$state", function($rootScope, userService: Shared.Services.UserService, $state: angular.ui.IStateService){
+            $rootScope.$on('$stateChangeStart',
+                function (event, toState, toParams, fromState, fromParams) {
+					if (fromState.name === ""){
+						console.log("initial state")
+					}					 
+					 
+					console.log(fromState.name + "->" +toState.name);
+					if (!userService.isLoggedIn()){
+						event.preventDefault();
+						userService.shoLoginWindow().then(function(){
+							$state.go(toState.name, toParams);
+						})
+					}					
+				});		
+		
 	}]);
 })();	
