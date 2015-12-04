@@ -94,4 +94,6 @@
 				}]
 			}); 				       	
 	}]);
+	
+	app.run(["$state", function($state) {}]);
 })();	
