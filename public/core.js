@@ -476,10 +476,6 @@ var Shared;
         }]);
     app.run(["$rootScope", "UserService", "$state", function ($rootScope, userService, $state) {
             $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
-                if (fromState.name === "") {
-                    console.log("initial state");
-                }
-                console.log(fromState.name + "->" + toState.name);
                 if (!userService.isLoggedIn()) {
                     event.preventDefault();
                     userService.shoLoginWindow().then(function () {
