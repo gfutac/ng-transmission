@@ -3,7 +3,7 @@
 
 (function (){
 	
-	angular.module("app").factory("apMenus", ["eehNavigation", "UserService", function(eehNavigation, userService: Shared.Services.UserService){		
+	angular.module("app").factory("appMenus", ["eehNavigation", "UserService", function(eehNavigation, userService: Shared.Services.UserService){		
 		
 		// navbar
 		eehNavigation

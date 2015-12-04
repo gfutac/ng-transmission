@@ -478,7 +478,7 @@ var Shared;
 /// <reference path="../typings/angularjs/angular.d.ts" />
 /// <reference path="appModule.ts" />
 (function () {
-    angular.module("app").factory("apMenus", ["eehNavigation", "UserService", function (eehNavigation, userService) {
+    angular.module("app").factory("appMenus", ["eehNavigation", "UserService", function (eehNavigation, userService) {
             // navbar
             eehNavigation
                 .menuItem("navbar.user", {
