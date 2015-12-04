@@ -33,7 +33,7 @@ module.exports = function(app, rp){
 		// res.send(t);
 		
 		rp(options).then(function success(response){
-			var k = 0;
+			console.log(response);
 		}, function error(err) {
 			if (err.statusCode === 409){
 				var token = err.response.headers['x-transmission-session-id'];
@@ -44,7 +44,7 @@ module.exports = function(app, rp){
 				options.body = res.req.body;
 								
 				rp(options).then(function(transmissionResponse){
-					transmissionResponse["token"] = token;
+					transmissionResponse["token"] = token;									
 					res.send(transmissionResponse);
 				})
 			}

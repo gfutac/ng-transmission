@@ -49,34 +49,29 @@ module Shared.Services {
 			this.torrentFilters[FilterEnum.Downloading] = function(torrent: Torrent) { return torrent.status === 4; };
 			this.torrentFilters[FilterEnum.Seeding] = function(torrent: Torrent) { return torrent.status === 6; };
 		}
-				
+						
 		private getAndFilterTorrents = (filterType: FilterEnum) => {
 			var deferred = this.$q.defer();
 			
-			if (!this.us.isLoggedIn()){
-				this.us.shoLoginWindow();
-												
-			} else {			
-				var filterFunc = this.torrentFilters[filterType];
-							
-				this.rpc.getTorrents().then((response: any) => {
-					if (angular.isDefined(response["token"])){
-						this.us.storeXSessionId(response["token"]);
-					}
-					
-					if (response.data.result === "success"){
-						this.torrents = response.data.arguments.torrents.filter(filterFunc);																			
-						deferred.resolve(this.torrents);					
-					} else {
-						deferred.reject({msg: "Something wrong happened."});	
-					}
-					
-	
-				}, function(err){
-					deferred.reject(err);
-				});			
-			
-			}
+			var filterFunc = this.torrentFilters[filterType];
+						
+			this.rpc.getTorrents().then((response: any) => {
+				if (angular.isDefined(response["token"])){
+					this.us.storeXSessionId(response["token"]);
+				}
+				
+				if (response.data.result === "success"){
+					this.torrents = response.data.arguments.torrents.filter(filterFunc);																			
+					deferred.resolve(this.torrents);					
+				} else {
+					deferred.reject({msg: "Something wrong happened."});	
+				}
+				
+
+			}, function(err){
+				deferred.reject(err);
+			});
+								
 			return deferred.promise;			
 		}
 						

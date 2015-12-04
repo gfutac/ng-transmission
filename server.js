@@ -16,7 +16,7 @@ var express = require('express'),
 // }    
 
 app.use(bodyParser.json());
-app.use(morgan('combined'));
+//app.use(morgan('combined'));
 app.use(express.static(__dirname + '/public'));
 app.use('/assets', express.static(__dirname + '/assets/'));
 app.use('/app', express.static(__dirname + '/app/'));

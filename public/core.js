@@ -62,26 +62,21 @@ var Shared;
                 this.torrentFilters = {};
                 this.getAndFilterTorrents = function (filterType) {
                     var deferred = _this.$q.defer();
-                    if (!_this.us.isLoggedIn()) {
-                        _this.us.shoLoginWindow();
-                    }
-                    else {
-                        var filterFunc = _this.torrentFilters[filterType];
-                        _this.rpc.getTorrents().then(function (response) {
-                            if (angular.isDefined(response["token"])) {
-                                _this.us.storeXSessionId(response["token"]);
-                            }
-                            if (response.data.result === "success") {
-                                _this.torrents = response.data.arguments.torrents.filter(filterFunc);
-                                deferred.resolve(_this.torrents);
-                            }
-                            else {
-                                deferred.reject({ msg: "Something wrong happened." });
-                            }
-                        }, function (err) {
-                            deferred.reject(err);
-                        });
-                    }
+                    var filterFunc = _this.torrentFilters[filterType];
+                    _this.rpc.getTorrents().then(function (response) {
+                        if (angular.isDefined(response["token"])) {
+                            _this.us.storeXSessionId(response["token"]);
+                        }
+                        if (response.data.result === "success") {
+                            _this.torrents = response.data.arguments.torrents.filter(filterFunc);
+                            deferred.resolve(_this.torrents);
+                        }
+                        else {
+                            deferred.reject({ msg: "Something wrong happened." });
+                        }
+                    }, function (err) {
+                        deferred.reject(err);
+                    });
                     return deferred.promise;
                 };
                 this.getRecentlyActiveTorrents = function () {
@@ -426,19 +421,24 @@ var Shared;
                 name: "app.torrents",
                 url: "/torrents",
                 template: '<torrent-list torrents="torrents"></torrent-list>',
-                controller: ["$scope", "$interval", "TorrentService", function ($scope, $interval, ts) {
-                        ts.getRecentlyActiveTorrents().then(function (torrents) {
-                            $scope.torrents = torrents;
-                        });
-                        var stop = $interval(function () {
+                controller: ["$scope", "$interval", "TorrentService", "UserService", function ($scope, $interval, ts, us) {
+                        if (us.isLoggedIn()) {
                             ts.getRecentlyActiveTorrents().then(function (torrents) {
                                 $scope.torrents = torrents;
                             });
-                        }, 1500);
-                        $scope.$on("$stateChangeStart", function () {
-                            $interval.cancel(stop);
-                            stop = undefined;
-                        });
+                            var stop = $interval(function () {
+                                ts.getRecentlyActiveTorrents().then(function (torrents) {
+                                    $scope.torrents = torrents;
+                                });
+                            }, 1500);
+                            $scope.$on("$stateChangeStart", function () {
+                                $interval.cancel(stop);
+                                stop = undefined;
+                            });
+                        }
+                        else {
+                            us.shoLoginWindow();
+                        }
                     }]
             })
                 .state({
