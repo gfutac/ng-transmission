@@ -474,7 +474,6 @@ var Shared;
                     }]
             });
         }]);
-    app.run(["$state", function ($state) { }]);
 })();
 /// <reference path="../typings/angularjs/angular.d.ts" />
 /// <reference path="appModule.ts" />
