@@ -24,19 +24,13 @@
 				name: "app",
 				abstract: true,
 				templateUrl: "app/layout.html",
-				controller: ["app-menus", function(appMenus){
-					
-				}]
+				controller: "root-controller"
 			})	
 			.state({
 				name: "app.torrents",
 				url: "/torrents",
 				template: '<torrent-list torrents="torrents"></torrent-list>',
 				controller: ["$scope", "$interval", "TorrentService", "UserService", function($scope: any, $interval: any, ts: Shared.Services.TorrentService, us: Shared.Services.UserService){
-					if (!us.isLoggedIn()){
-						us.shoLoginWindow();	
-					}
-					
 					ts.getRecentlyActiveTorrents().then(function(torrents: Shared.Services.Torrent[]){
 						$scope.torrents = torrents;												
 					});
@@ -50,7 +44,9 @@
 					$scope.$on("$stateChangeStart", function(){
 						$interval.cancel(stop);
 						stop = undefined;					
-					});															
+					});
+					
+															
 				}]
 			})
 			.state({

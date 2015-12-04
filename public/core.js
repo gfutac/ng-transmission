@@ -414,17 +414,13 @@ var Shared;
                 name: "app",
                 abstract: true,
                 templateUrl: "app/layout.html",
-                controller: ["app-menus", function (appMenus) {
-                    }]
+                controller: "root-controller"
             })
                 .state({
                 name: "app.torrents",
                 url: "/torrents",
                 template: '<torrent-list torrents="torrents"></torrent-list>',
                 controller: ["$scope", "$interval", "TorrentService", "UserService", function ($scope, $interval, ts, us) {
-                        if (!us.isLoggedIn()) {
-                            us.shoLoginWindow();
-                        }
                         ts.getRecentlyActiveTorrents().then(function (torrents) {
                             $scope.torrents = torrents;
                         });
@@ -482,7 +478,7 @@ var Shared;
 /// <reference path="../typings/angularjs/angular.d.ts" />
 /// <reference path="appModule.ts" />
 (function () {
-    angular.module("app").factory("app-menus", ["eehNavigation", "UserService", function (eehNavigation, userService) {
+    angular.module("app").factory("apMenus", ["eehNavigation", "UserService", function (eehNavigation, userService) {
             // navbar
             eehNavigation
                 .menuItem("navbar.user", {
@@ -573,4 +569,23 @@ var Shared;
             };
         }]);
 })();
+var Shared;
+(function (Shared) {
+    var RootController = (function () {
+        function RootController($rootScope, $state, userService, appMenus) {
+            $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+                console.log(toState);
+                if (!userService.isLoggedIn()) {
+                    event.preventDefault();
+                    userService.shoLoginWindow().then(function () {
+                        $state.go(toState.name, toParams);
+                    });
+                }
+            });
+        }
+        RootController.$inject = ["$rootScope", "$state", "userService", "appMenus"];
+        return RootController;
+    })();
+    angular.module("shared").controller("root-controller", RootController);
+})(Shared || (Shared = {}));
 //# sourceMappingURL=core.js.map
