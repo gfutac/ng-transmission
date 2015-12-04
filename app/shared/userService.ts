@@ -64,10 +64,10 @@ module Shared.Services {
 		public shoLoginWindow = () => {
 			var self = this;
 			
-			if (self.loginModalInstancePromise) return self.loginModalInstancePromise;
-			self.logout();
+			if (this.loginModalInstancePromise) return this.loginModalInstancePromise;
+			this.logout();
 			
-			self.loginModalInstance = self.$modal.open({
+			this.loginModalInstance = this.$modal.open({
 				windowClass:"login-dialog-window",
 				templateUrl: "app/shared/layouts/login.html",
 				controller: ["$scope", function($scope){
@@ -80,7 +80,7 @@ module Shared.Services {
                             return;
                         }
 						
-						// $scope.isBusy = true;
+						$scope.isBusy = true;
 						
 						self.storeUserData($scope.user.username, $scope.user.password);						
 					}
@@ -89,7 +89,16 @@ module Shared.Services {
                         $scope.$dismiss();                     
                     }
 				}]
-			})											
+			});
+			
+			this.loginModalInstancePromise = self.loginModalInstance.result.then(function(){
+				
+			}).finally(function(){
+				self.loginModalInstance = undefined;
+				self.loginModalInstancePromise = undefined;   
+			});
+			
+														
 		}
 	}
 	

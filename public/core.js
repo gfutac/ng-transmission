@@ -350,10 +350,10 @@ var Shared;
                 };
                 this.shoLoginWindow = function () {
                     var self = _this;
-                    if (self.loginModalInstancePromise)
-                        return self.loginModalInstancePromise;
-                    self.logout();
-                    self.loginModalInstance = self.$modal.open({
+                    if (_this.loginModalInstancePromise)
+                        return _this.loginModalInstancePromise;
+                    _this.logout();
+                    _this.loginModalInstance = _this.$modal.open({
                         windowClass: "login-dialog-window",
                         templateUrl: "app/shared/layouts/login.html",
                         controller: ["$scope", function ($scope) {
@@ -364,13 +364,18 @@ var Shared;
                                         $scope.statusMessage = "Please enter username.";
                                         return;
                                     }
-                                    // $scope.isBusy = true;
+                                    $scope.isBusy = true;
                                     self.storeUserData($scope.user.username, $scope.user.password);
                                 };
                                 $scope.cancel = function () {
                                     $scope.$dismiss();
                                 };
                             }]
+                    });
+                    _this.loginModalInstancePromise = self.loginModalInstance.result.then(function () {
+                    }).finally(function () {
+                        self.loginModalInstance = undefined;
+                        self.loginModalInstancePromise = undefined;
                     });
                 };
                 this.$window = $window;
