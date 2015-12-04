@@ -27,7 +27,7 @@ module Shared.Services {
 			try{
 				this.auth = this.$window.localStorage.getItem("auth_token");
 				if (this.auth){
-					this.$http.defaults.headers["Authorization"] = this.auth;
+					this.$http.defaults.headers.common["Authorization"] = this.auth;
 				}
 			} catch (e){
 				// ignorable				
@@ -43,23 +43,23 @@ module Shared.Services {
 			var encoded = "Basic " + btoa(combined);
 			this.auth = encoded;
 			this.$window.localStorage.setItem("auth_token", this.auth);
-			this.$http.defaults.headers["Authorization"] = this.auth;
+			this.$http.defaults.headers.common["Authorization"] = this.auth;
 		}
 		
 		public storeXSessionId = (sessionid: string) => {
 			this.$window.localStorage.setItem("X-transmission-session-id", sessionid);
-			this.$http.defaults.headers["X-transmission-session-id"] = sessionid;
+			this.$http.defaults.headers.common["X-transmission-session-id"] = sessionid;
 		}
 				
 		public logout =() => {
 			this.auth = null;
 			this.$window.localStorage.removeItem("auth_token");			
-			delete this.$http.defaults.headers["Authorization"];
+			delete this.$http.defaults.headers.common["Authorization"];
 		}
 		
 		public clearXSessionId = () => {
 			this.$window.localStorage.removeItem("X-transmission-session-id");
-			delete this.$http.defaults.headers["X-transmission-session-id"];	
+			delete this.$http.defaults.headers.common["X-transmission-session-id"];	
 		}
 		
 		public shoLoginWindow = () => {

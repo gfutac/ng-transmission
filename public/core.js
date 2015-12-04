@@ -329,20 +329,20 @@ var Shared;
                     var encoded = "Basic " + btoa(combined);
                     _this.auth = encoded;
                     _this.$window.localStorage.setItem("auth_token", _this.auth);
-                    _this.$http.defaults.headers["Authorization"] = _this.auth;
+                    _this.$http.defaults.headers.common["Authorization"] = _this.auth;
                 };
                 this.storeXSessionId = function (sessionid) {
                     _this.$window.localStorage.setItem("X-transmission-session-id", sessionid);
-                    _this.$http.defaults.headers["X-transmission-session-id"] = sessionid;
+                    _this.$http.defaults.headers.common["X-transmission-session-id"] = sessionid;
                 };
                 this.logout = function () {
                     _this.auth = null;
                     _this.$window.localStorage.removeItem("auth_token");
-                    delete _this.$http.defaults.headers["Authorization"];
+                    delete _this.$http.defaults.headers.common["Authorization"];
                 };
                 this.clearXSessionId = function () {
                     _this.$window.localStorage.removeItem("X-transmission-session-id");
-                    delete _this.$http.defaults.headers["X-transmission-session-id"];
+                    delete _this.$http.defaults.headers.common["X-transmission-session-id"];
                 };
                 this.shoLoginWindow = function () {
                     var self = _this;
@@ -381,7 +381,7 @@ var Shared;
                 try {
                     this.auth = this.$window.localStorage.getItem("auth_token");
                     if (this.auth) {
-                        this.$http.defaults.headers["Authorization"] = this.auth;
+                        this.$http.defaults.headers.common["Authorization"] = this.auth;
                     }
                 }
                 catch (e) {
