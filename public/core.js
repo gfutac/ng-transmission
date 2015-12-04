@@ -327,7 +327,7 @@ var Shared;
                 var _this = this;
                 this.auth = null;
                 this.isLoggedIn = function () {
-                    return angular.isDefined(_this.auth);
+                    return !!_this.auth;
                 };
                 this.storeUserData = function (username, password) {
                     var combined = username + ":" + password;

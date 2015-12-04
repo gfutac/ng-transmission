@@ -35,7 +35,7 @@ module Shared.Services {
 		}
 		
 		public isLoggedIn = (): boolean => {
-			return angular.isDefined(this.auth);
+			return !!this.auth;
 		}
 		
 		public storeUserData = (username: string, password: string) => {
