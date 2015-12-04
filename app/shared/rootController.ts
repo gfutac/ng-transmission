@@ -6,8 +6,9 @@ module Shared{
 		
 		constructor($rootScope, $state: angular.ui.IStateService, userService: Shared.Services.UserService, appMenus){
             $rootScope.$on('$stateChangeStart',
-                function (event, toState, toParams, fromState, fromParams) { 
-					console.log(toState);
+                function (event, toState, toParams, fromState, fromParams) {
+					 
+					console.log(fromState.name + "->" +toState.name);
 					if (!userService.isLoggedIn()){
 						event.preventDefault();
 						userService.shoLoginWindow().then(function(){

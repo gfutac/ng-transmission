@@ -574,7 +574,7 @@ var Shared;
     var RootController = (function () {
         function RootController($rootScope, $state, userService, appMenus) {
             $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
-                console.log(toState);
+                console.log(fromState.name + "->" + toState.name);
                 if (!userService.isLoggedIn()) {
                     event.preventDefault();
                     userService.shoLoginWindow().then(function () {
