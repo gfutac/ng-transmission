@@ -6,22 +6,43 @@ module.exports = function(app, rp){
 		res.sendFile(__dirname + './public/index.html');
 	});
 	
-	app.post("/transmission/rpc", function(req, res) {
-	
-		console.log("[RPC] --- rpc incoming request");
-		console.log("[RPC] {REQUEST} ---");
-		console.log(req);		
-	
+	app.post("/transmission/rpc/login", function(req, res){
 		var options = {
 			url: "http://localhost:9091/transmission/rpc", 
 			method: "POST", 
 			headers: {
-				'Authorization' : req.headers['authorization']
+				'Content-type': 'application/json',
+				'Authorization': req.headers['authorization'],
+			}
+		};
+		
+		rp(options).then(
+			function success(response){
+				res.send(response)
+			}, 
+			function error(err){
+				if (err.statusCode === 401){
+					res.send(err);
+				}
+			})
+	});
+	
+	app.post("/transmission/rpc", function(req, res) {
+		
+		var options = {
+			url: "http://localhost:9091/transmission/rpc", 
+			method: "POST", 
+			headers: {
+				'Authorization': req.headers['authorization'],
+				'Content-type': 'application/json',
 			}
 		};
 		
 		if (req.headers["x-transmission-session-id"]){
 			options.headers["X-transmission-session-id"] = req.headers['x-transmission-session-id'];
+			
+			options.json = true;
+			options.body = req.body;
 		}
 		
 		// var t = {
@@ -36,8 +57,8 @@ module.exports = function(app, rp){
 		// } ;
 		// res.send(t);
 		
-		rp(options).then(function success(response){
-			console.log(response);
+		rp(options).then(function success(response){			
+			res.send(response);			
 		}, function error(err) {
 			if (err.statusCode === 409){
 				var token = err.response.headers['x-transmission-session-id'];
@@ -48,7 +69,7 @@ module.exports = function(app, rp){
 				options.body = res.req.body;
 								
 				rp(options).then(function(transmissionResponse){
-					transmissionResponse["token"] = token;									
+					transmissionResponse["token"] = token;		
 					res.send(transmissionResponse);
 				})
 			}

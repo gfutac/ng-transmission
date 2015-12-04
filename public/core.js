@@ -359,6 +359,15 @@ var Shared;
                                         return;
                                     }
                                     $scope.isBusy = true;
+                                    self.$http.post("/transmission/rpc/login", {}, {
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        }
+                                    }).then(function success(response) {
+                                        var l = 0;
+                                    }, function error(response) {
+                                        var k = 0;
+                                    });
                                     self.auth = "Basic " + btoa($scope.user.username + ":" + $scope.user.password);
                                     $scope.$close(self.auth);
                                 };
