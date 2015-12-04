@@ -17,7 +17,10 @@
 		$translateProvider.useSanitizeValueStrategy('escape');	
 		
 		// default route	
-		$urlRouterProvider.otherwise("/torrents");
+		$urlRouterProvider.otherwise( function($injector, $location) {
+					var $state = $injector.get("$state");
+					$state.go("/torrent");
+				});
 		
 		$stateProvider
 			.state({
