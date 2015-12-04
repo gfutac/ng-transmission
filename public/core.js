@@ -583,7 +583,7 @@ var Shared;
                 }
             });
         }
-        RootController.$inject = ["$rootScope", "$state", "userService", "appMenus"];
+        RootController.$inject = ["$rootScope", "$state", "UserService", "appMenus"];
         return RootController;
     })();
     angular.module("shared").controller("root-controller", RootController);
