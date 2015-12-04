@@ -64,8 +64,8 @@ var Shared;
                     var deferred = _this.$q.defer();
                     var filterFunc = _this.torrentFilters[filterType];
                     _this.rpc.getTorrents().then(function (response) {
-                        if (angular.isDefined(response["token"])) {
-                            _this.us.storeXSessionId(response["token"]);
+                        if (angular.isDefined(response.data["token"])) {
+                            _this.us.storeXSessionId(response.data["token"]);
                         }
                         if (response.data.result === "success") {
                             _this.torrents = response.data.arguments.torrents.filter(filterFunc);

@@ -56,8 +56,8 @@ module Shared.Services {
 			var filterFunc = this.torrentFilters[filterType];
 						
 			this.rpc.getTorrents().then((response: any) => {
-				if (angular.isDefined(response["token"])){
-					this.us.storeXSessionId(response["token"]);
+				if (angular.isDefined(response.data["token"])){
+					this.us.storeXSessionId(response.data["token"]);
 				}
 				
 				if (response.data.result === "success"){
