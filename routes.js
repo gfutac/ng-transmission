@@ -8,6 +8,10 @@ module.exports = function(app, rp){
 	
 	app.post("/transmission/rpc", function(req, res) {
 	
+		console.log("[RPC] --- rpc incoming request");
+		console.log("[RPC] {REQUEST} ---");
+		console.log(req);		
+	
 		var options = {
 			url: "http://localhost:9091/transmission/rpc", 
 			method: "POST", 
