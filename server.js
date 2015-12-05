@@ -15,7 +15,11 @@ var express = require('express'),
 //     next();
 // }    
 
-app.use(bodyParser.json());
+//app.use(bodyParser.json());
+
+app.use(bodyParser.urlencoded({limit: '5mb'}));
+app.use(bodyParser.json({limit: '5mb'}))
+
 //app.use(morgan('combined'));
 app.use(express.static(__dirname + '/public'));
 app.use('/assets', express.static(__dirname + '/assets/'));

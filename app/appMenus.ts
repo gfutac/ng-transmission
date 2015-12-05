@@ -3,7 +3,8 @@
 
 (function (){
 	
-	angular.module("app").factory("appMenus", ["eehNavigation", "UserService", function(eehNavigation, userService: Shared.Services.UserService){		
+	angular.module("app").factory("appMenus", ["eehNavigation", "UserService", "TorrentService", 
+		function(eehNavigation, userService: Shared.Services.UserService, torrentService: Shared.Services.TorrentService){		
 		
 		// navbar
 		eehNavigation
@@ -19,7 +20,9 @@
 				text: "Add torrent",
 				iconClass: "fa fa-upload",
 				weight: -2,
-				click: function() {alert("kita")}
+				click: function() {
+					torrentService.showAddTorrentDialog();	
+				}
 			})
 			.menuItem("navbar.pauseAll", {
 				text: "Pause all",

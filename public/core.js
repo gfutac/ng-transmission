@@ -1,5 +1,35 @@
 (function () {
-    angular.module("shared", []);
+    angular.module("shared", [])
+        .directive("torrentUploader", function () {
+        return {
+            restrict: "E",
+            replace: true,
+            templateUrl: "app/shared/layouts/uploader.html",
+            link: function (scope, elem, attributes) {
+                scope.url = attributes.url;
+                var input = $("input:file", elem);
+                var reader = new FileReader();
+                if (angular.isDefined(elem.attr("accept"))) {
+                    input[0].setAttribute("accept", elem.attr("accept"));
+                    elem.removeAttr("accept");
+                }
+                reader.onloadend = function () {
+                    var prefix = "data:application/x-bittorrent;base64,";
+                    scope.torrent.torrentMetainfo = reader.result.replace(prefix, "");
+                };
+                input.on("change", function (changeEvent) {
+                    scope.$apply(function () {
+                        var file = changeEvent.target.files[0];
+                        scope.file = reader.readAsDataURL(file);
+                        scope.statusMessage = "";
+                    });
+                    $("input:text", elem).val(changeEvent.target.files[0].name);
+                });
+            },
+            controller: ["$scope", "$http", function ($scope, $http) {
+                }],
+        };
+    });
 })();
 /// <reference path="../../shared/sharedModule.ts" />
 /// <reference path="../../../typings/angularjs/angular.d.ts" />
@@ -12,14 +42,7 @@ var Shared;
                 var _this = this;
                 this.getTorrents = function () {
                     var deferred = _this.$q.defer();
-                    var data = {
-                        "arguments": {
-                            "fields": ["id", "name", "status", "error", "errorString", "isFinished", "isStalled", "addedDate", "eta", "rateDownload", "rateUpload", "percentDone", "peersSendingToUs", "peersGettingFromUs", "peersConnected", "totalSize", "leftUntilDone", "uploadedEver"],
-                            "ids": "recently-active"
-                        },
-                        "method": "torrent-get"
-                    };
-                    _this.$http.post('/transmission/rpc', data, {
+                    _this.$http.post('/transmission/rpc/gettorrents', {}, {
                         headers: {
                             'Content-Type': 'application/json',
                         }
@@ -28,6 +51,20 @@ var Shared;
                         deferred.resolve(response);
                     }, function (response) {
                         deferred.reject({ msg: "Something gone wrong." });
+                    });
+                    return deferred.promise;
+                };
+                this.addTorrent = function (data) {
+                    var deferred = _this.$q.defer();
+                    _this.$http.post('/transmission/rpc/addtorrent', data, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    }).
+                        then(function (response) {
+                        deferred.resolve(response);
+                    }, function (response) {
+                        deferred.reject({ msg: "Something gone wrong while adding a torrent." });
                     });
                     return deferred.promise;
                 };
@@ -56,10 +93,48 @@ var Shared;
             FilterEnum[FilterEnum["Seeding"] = 4] = "Seeding";
         })(FilterEnum || (FilterEnum = {}));
         var TorrentService = (function () {
-            function TorrentService(rpc, $q, us) {
+            function TorrentService(rpc, $q, us, $modal) {
                 var _this = this;
                 this.torrents = [];
                 this.torrentFilters = {};
+                this.showAddTorrentDialog = function () {
+                    if (_this.addTorrentModalInstancePromise)
+                        return _this.addTorrentModalInstancePromise;
+                    var self = _this;
+                    _this.addTorrentModalInstance = _this.$modal.open({
+                        windowClass: "login-dialog-window",
+                        templateUrl: "app/components/torrents/layouts/addTorrent.html",
+                        controller: ["$scope", function ($scope) {
+                                $scope.torrent = {};
+                                $scope.cancel = function () {
+                                    $scope.$dismiss();
+                                };
+                                $scope.add = function () {
+                                    if (!!!$scope.torrent.url && !!!$scope.torrent.torrentMetainfo) {
+                                        $scope.statusMessage = "Enter torrent URL or upload torrent file";
+                                        $scope.messageClass = "alert-warning";
+                                        return;
+                                    }
+                                    var data = {};
+                                    if (!!$scope.torrent.url) {
+                                        data.filename = $scope.torrent.url;
+                                    }
+                                    else {
+                                        data.metainfo = $scope.torrent.torrentMetainfo;
+                                    }
+                                    self.rpc.addTorrent(data).then(function (response) {
+                                        if (response.data.result !== "success") {
+                                            $scope.statusMessage = "Something gone wrong while adding torrent";
+                                            $scope.messageClass = "alert-error";
+                                        }
+                                        else {
+                                            $scope.$close({});
+                                        }
+                                    });
+                                };
+                            }]
+                    });
+                };
                 this.getAndFilterTorrents = function (filterType) {
                     var deferred = _this.$q.defer();
                     var filterFunc = _this.torrentFilters[filterType];
@@ -91,12 +166,13 @@ var Shared;
                 this.rpc = rpc;
                 this.$q = $q;
                 this.us = us;
+                this.$modal = $modal;
                 this.torrentFilters[FilterEnum.All] = function (torrent) { return true; };
                 this.torrentFilters[FilterEnum.Stopped] = function (torrent) { return torrent.status === 0; };
                 this.torrentFilters[FilterEnum.Downloading] = function (torrent) { return torrent.status === 4; };
                 this.torrentFilters[FilterEnum.Seeding] = function (torrent) { return torrent.status === 6; };
             }
-            TorrentService.$inject = ["RpcService", "$q", "UserService"];
+            TorrentService.$inject = ["RpcService", "$q", "UserService", "$modal"];
             return TorrentService;
         })();
         Services.TorrentService = TorrentService;
@@ -507,7 +583,8 @@ var Shared;
 /// <reference path="../typings/angularjs/angular.d.ts" />
 /// <reference path="appModule.ts" />
 (function () {
-    angular.module("app").factory("appMenus", ["eehNavigation", "UserService", function (eehNavigation, userService) {
+    angular.module("app").factory("appMenus", ["eehNavigation", "UserService", "TorrentService",
+        function (eehNavigation, userService, torrentService) {
             // navbar
             eehNavigation
                 .menuItem("navbar.user", {
@@ -522,7 +599,9 @@ var Shared;
                 text: "Add torrent",
                 iconClass: "fa fa-upload",
                 weight: -2,
-                click: function () { alert("kita"); }
+                click: function () {
+                    torrentService.showAddTorrentDialog();
+                }
             })
                 .menuItem("navbar.pauseAll", {
                 text: "Pause all",

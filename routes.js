@@ -1,7 +1,7 @@
 
 
 module.exports = function(app, rp){
-		
+				
 	app.get("/", function(req, res){
 		res.sendFile(__dirname + './public/index.html');
 	});
@@ -16,18 +16,22 @@ module.exports = function(app, rp){
 			}
 		};
 		
+		console.log(options);
+		
 		rp(options).then(
 			function success(response){
-				res.send(response)
+				res.send({statusCode: 200});
 			}, 
 			function error(err){
-				if (err.statusCode === 401){
-					res.send(err);
-				}
+				if (err.statusCode === 409)
+					res.send({statusCode: 200});
+				else 
+					res.send({statusCode: err.statusCode})
+				
 			})
 	});
 	
-	app.post("/transmission/rpc", function(req, res) {
+	app.post("/transmission/rpc/gettorrents", function(req, res) {
 		
 		var options = {
 			url: "http://localhost:9091/transmission/rpc", 
@@ -38,24 +42,20 @@ module.exports = function(app, rp){
 			}
 		};
 		
+		var requestData = {  
+			"arguments":{
+				"fields": [ "id", "name", "status", "error", "errorString", "isFinished", "isStalled", "addedDate", "eta", "rateDownload", "rateUpload", "percentDone", "peersSendingToUs", "peersGettingFromUs",  "peersConnected", "totalSize", "leftUntilDone", "uploadedEver"],
+				"ids": "recently-active"
+			},
+			"method": "torrent-get"
+		};		
+		
 		if (req.headers["x-transmission-session-id"]){
 			options.headers["X-transmission-session-id"] = req.headers['x-transmission-session-id'];
 			
 			options.json = true;
-			options.body = req.body;
+			options.body = requestData;
 		}
-		
-		// var t = {
-		// 	result: "success",
-		// 	arguments: {
-		// 			torrents:[{"addedDate":"2015-11-29T20:12:16.000Z","error":0,"errorString":"","eta":"0 second","id":1,"isFinished":true,"isStalled":false,"leftUntilDone":"0 B","name":"Supernatural Season 01","peersConnected":11,"peersSendingToUs":0,"percentDone":"100","rateDownload":"0 kB/s",							"rateUpload":"9 kB/s","status":4,"totalSize":"7.71 GB"
-		// 			}, {"addedDate":"2015-11-29T20:12:16.000Z","error":0,"errorString":"","eta":"0 second","id":1,"isFinished":true,"isStalled":false,"leftUntilDone":"0 B","name":"Supernatural Season 01","peersConnected":11,"peersSendingToUs":0,"percentDone":"100","rateDownload":"0 kB/s",							"rateUpload":"9 kB/s","status":4,"totalSize":"7.71 GB"
-		// 			}, {"addedDate":"2015-11-29T20:12:16.000Z","error":0,"errorString":"","eta":"0 second","id":1,"isFinished":true,"isStalled":false,"leftUntilDone":"0 B","name":"Supernatural Season 01","peersConnected":11,"peersSendingToUs":0,"percentDone":"100","rateDownload":"0 kB/s",							"rateUpload":"9 kB/s","status":4,"totalSize":"7.71 GB"
-		// 			}]
-		// 		}
-		// 	
-		// } ;
-		// res.send(t);
 		
 		rp(options).then(function success(response){			
 			res.send(response);			
@@ -66,7 +66,7 @@ module.exports = function(app, rp){
 				options.json = true;
 				options.headers['X-transmission-session-id'] = token;
 				options.headers['Content-type'] = 'application/json';
-				options.body = res.req.body;
+				options.body = requestData;
 								
 				rp(options).then(function(transmissionResponse){
 					transmissionResponse["token"] = token;		
@@ -75,5 +75,40 @@ module.exports = function(app, rp){
 			}
 		});      
 	});
+	
+	app.post("/transmission/rpc/addtorrent", function(req, res){
+		
+		var options = {
+			url: "http://localhost:9091/transmission/rpc", 
+			method: "POST", 
+			headers: {
+				'Authorization': req.headers['authorization'],
+				'X-transmission-session-id': req.headers['x-transmission-session-id'],
+				'Content-type': 'application/json',
+			},
+			json: true
+		};	
+						
+		var requestData = {  
+			"arguments":{				
+			},
+			"method": "torrent-add"
+		};		
+		
+		if (!!req.body.filename){
+			requestData.arguments.filename = req.body.filename;
+		} else if (!!req.body.metainfo){
+			requestData.arguments.metainfo = req.body.metainfo;
+		}
+		
+		options.body = requestData;
+		
+		rp(options).then(function(response){
+			res.send(response);
+		}, function(err){
+			res.send(err)
+		})
+		
+	})
 
 }

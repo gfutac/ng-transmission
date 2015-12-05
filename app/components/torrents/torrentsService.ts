@@ -37,19 +37,65 @@ module Shared.Services {
 		private us: Shared.Services.UserService;
 		private $q: angular.IQService;		
 		private torrentFilters: { [filterType: number]: (torrent: Torrent) => boolean } = {};
+
+		private $modal: angular.ui.bootstrap.IModalService;
+        private addTorrentModalInstance: angular.ui.bootstrap.IModalServiceInstance; 
+        private addTorrentModalInstancePromise; // keep it to prevent double dialogs
 			
-		static $inject = ["RpcService", "$q", "UserService"]			
+		static $inject = ["RpcService", "$q", "UserService", "$modal"]			
 			
-		constructor(rpc, $q, us) {
+		constructor(rpc, $q, us, $modal) {
 			this.rpc = rpc;
 			this.$q = $q;
 			this.us = us;
+			this.$modal = $modal;
 			
 			this.torrentFilters[FilterEnum.All] = function(torrent: Torrent) { return true; };
 			this.torrentFilters[FilterEnum.Stopped] = function(torrent: Torrent) { return torrent.status === 0; };
 			this.torrentFilters[FilterEnum.Downloading] = function(torrent: Torrent) { return torrent.status === 4; };
 			this.torrentFilters[FilterEnum.Seeding] = function(torrent: Torrent) { return torrent.status === 6; };
 		}
+				
+		public showAddTorrentDialog = () => {
+			if (this.addTorrentModalInstancePromise) return this.addTorrentModalInstancePromise;
+			
+			var self = this;
+			this.addTorrentModalInstance = this.$modal.open({
+				windowClass: "login-dialog-window",
+				templateUrl: "app/components/torrents/layouts/addTorrent.html",
+				controller: ["$scope", function($scope){
+					$scope.torrent = {};
+					
+					$scope.cancel = function () {
+                        $scope.$dismiss();                     
+                    }
+					
+					$scope.add = function(){
+						if (!!!$scope.torrent.url && !!!$scope.torrent.torrentMetainfo){
+							$scope.statusMessage = "Enter torrent URL or upload torrent file";
+							$scope.messageClass = "alert-warning";
+							return;
+						}
+						
+						var data: any = {};
+						if (!!$scope.torrent.url){
+							data.filename = $scope.torrent.url;  
+						} else {
+							data.metainfo = $scope.torrent.torrentMetainfo;
+						}
+						
+						self.rpc.addTorrent(data).then(function(response: any){
+							if (response.data.result !== "success"){
+								$scope.statusMessage = "Something gone wrong while adding torrent";
+								$scope.messageClass = "alert-error";								
+							} else {
+								$scope.$close({});
+							}
+						});
+					}
+				}]
+			})
+		}				
 						
 		private getAndFilterTorrents = (filterType: FilterEnum) => {
 			var deferred = this.$q.defer();

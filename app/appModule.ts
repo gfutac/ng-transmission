@@ -18,9 +18,9 @@
 		
 		// default route	
 		$urlRouterProvider.otherwise( function($injector, $location) {
-					var $state = $injector.get("$state");
-					$state.go("app.torrents");
-				});
+			var $state = $injector.get("$state");
+			$state.go("app.torrents");
+		});
 		
 		$stateProvider
 			.state({

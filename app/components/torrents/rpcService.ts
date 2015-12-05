@@ -23,16 +23,8 @@ module Shared.Services {
 		public getTorrents = () => {			
 			
 			var deferred = this.$q.defer();
-			
-			var data = {  
-				"arguments":{
-					"fields": [ "id", "name", "status", "error", "errorString", "isFinished", "isStalled", "addedDate", "eta", "rateDownload", "rateUpload", "percentDone", "peersSendingToUs", "peersGettingFromUs",  "peersConnected", "totalSize", "leftUntilDone", "uploadedEver"],
-					"ids": "recently-active"
-				},
-				"method": "torrent-get"
-			};
-			
-			this.$http.post('/transmission/rpc', data, {
+						
+			this.$http.post('/transmission/rpc/gettorrents', {}, {
 				headers: {
 					'Content-Type': 'application/json',
 				}
@@ -46,7 +38,22 @@ module Shared.Services {
 			return deferred.promise;		
 		}	
 		
-		
+		public addTorrent = (data) => {
+			var deferred = this.$q.defer();
+						
+			this.$http.post('/transmission/rpc/addtorrent', data, {
+				headers: {
+					'Content-Type': 'application/json',
+				}
+			}).
+			then(function (response){
+				deferred.resolve(response);				
+			}, function (response){
+				deferred.reject({msg: "Something gone wrong while adding a torrent."})
+			});	
+			
+			return deferred.promise;			
+		}				
 	}
 	
 	angular.module("shared").service("RpcService", RpcService);
