@@ -899,10 +899,16 @@ var Shared;
                             ['Pause', function ($itemScope) {
                                     var torrentId = $itemScope.torrent.id;
                                     ts.pauseTorrent(torrentId);
+                                }, function ($itemScope) {
+                                    // enable or disable pausing
+                                    return $itemScope.torrent.status !== 0;
                                 }],
                             ['Resume', function ($itemScope) {
                                     var torrentId = $itemScope.torrent.id;
                                     ts.resumeTorrent(torrentId);
+                                }, function ($itemScope) {
+                                    // enable or disable resuming
+                                    return $itemScope.torrent.status === 0;
                                 }],
                             null,
                             ['Move to Top', function ($itemScope) {
