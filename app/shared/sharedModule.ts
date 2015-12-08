@@ -63,17 +63,17 @@
 				} else {
 					var $a = $('<a>');
 					$a.attr({ tabindex: '-1', href: '#' });
-					var text = typeof item[0] == 'string' ? item[0] : item[0].call($scope, $scope, event, model);
+					var text = item.text;
 					$a.text(text);
 					$li.append($a);
-					var enabled = angular.isDefined(item[2]) ? item[2].call($scope, $scope, event, text, model) : true;
+					var enabled = angular.isDefined(item.enabled) ? item.enabled.call($scope, $scope, event, text, model) : true;
 					if (enabled) {
 						$li.on('click', function ($event) {
 							$event.preventDefault();
 							$scope.$apply(function () {
 								$(event.currentTarget).removeClass('context');
 								$contextMenu.remove();
-								item[1].call($scope, $scope, event, model);
+								item.click.call($scope, $scope, event, model);
 							});
 						});
 					} else {

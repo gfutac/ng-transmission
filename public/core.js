@@ -56,17 +56,17 @@
                     else {
                         var $a = $('<a>');
                         $a.attr({ tabindex: '-1', href: '#' });
-                        var text = typeof item[0] == 'string' ? item[0] : item[0].call($scope, $scope, event, model);
+                        var text = item.text;
                         $a.text(text);
                         $li.append($a);
-                        var enabled = angular.isDefined(item[2]) ? item[2].call($scope, $scope, event, text, model) : true;
+                        var enabled = angular.isDefined(item.enabled) ? item.enabled.call($scope, $scope, event, text, model) : true;
                         if (enabled) {
                             $li.on('click', function ($event) {
                                 $event.preventDefault();
                                 $scope.$apply(function () {
                                     $(event.currentTarget).removeClass('context');
                                     $contextMenu.remove();
-                                    item[1].call($scope, $scope, event, model);
+                                    item.click.call($scope, $scope, event, model);
                                 });
                             });
                         }
@@ -896,46 +896,16 @@ var Shared;
                         $scope.torrent.totalSize = hp.size(torrent.totalSize);
                         $scope.torrent.uploadedEver = hp.size(torrent.uploadedEver);
                         $scope.menuOptions = [
-                            ['Pause', function ($itemScope) {
+                            {
+                                text: "Pause",
+                                click: function ($itemScope) {
                                     var torrentId = $itemScope.torrent.id;
                                     ts.pauseTorrent(torrentId);
-                                }, function ($itemScope) {
-                                    // enable or disable pausing
+                                },
+                                enabled: function ($itemScope) {
                                     return $itemScope.torrent.status !== 0;
-                                }],
-                            ['Resume', function ($itemScope) {
-                                    var torrentId = $itemScope.torrent.id;
-                                    ts.resumeTorrent(torrentId);
-                                }, function ($itemScope) {
-                                    // enable or disable resuming
-                                    return $itemScope.torrent.status === 0;
-                                }],
-                            null,
-                            ['Move to Top', function ($itemScope) {
-                                    var torrentId = $itemScope.torrent.id;
-                                    ts.moveTop(torrentId);
-                                }],
-                            ['Move Up', function ($itemScope) {
-                                    var torrentId = $itemScope.torrent.id;
-                                    ts.moveUp(torrentId);
-                                }],
-                            ['Move Down', function ($itemScope) {
-                                    var torrentId = $itemScope.torrent.id;
-                                    ts.moveDown(torrentId);
-                                }],
-                            ['Move Move to Bottom', function ($itemScope) {
-                                    var torrentId = $itemScope.torrent.id;
-                                    ts.moveBot(torrentId);
-                                }],
-                            null,
-                            ['Remove From List', function ($itemScope) {
-                                    var torrentId = $itemScope.torrent.id;
-                                    ts.removeTorrent(torrentId, false);
-                                }],
-                            ['Trash Data and Remove From List', function ($itemScope) {
-                                    var torrentId = $itemScope.torrent.id;
-                                    ts.removeTorrent(torrentId, true);
-                                }],
+                                }
+                            }
                         ];
                     }]
             };
