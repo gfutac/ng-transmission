@@ -1,6 +1,11 @@
 
 
 module.exports = function(app, rp){
+		
+	var allTorrentsIds = [];
+	for (var i = 1; i < 100; ++i){
+		allTorrentsIds.push(i);
+	}	
 				
 	app.get("/", function(req, res){
 		res.sendFile(__dirname + './public/index.html');
@@ -45,7 +50,7 @@ module.exports = function(app, rp){
 		var requestData = {  
 			"arguments":{
 				"fields": [ "id", "name", "status", "error", "errorString", "isFinished", "isStalled", "addedDate", "eta", "rateDownload", "rateUpload", "percentDone", "peersSendingToUs", "peersGettingFromUs",  "peersConnected", "totalSize", "leftUntilDone", "uploadedEver"],
-				"ids": "recently-active"
+				"ids": allTorrentsIds
 			},
 			"method": "torrent-get"
 		};

@@ -33,13 +33,12 @@
 				});
 			},
 			controller: ["$scope", "$http", function ($scope, $http: angular.IHttpService) {
-				
 			}],
 		};
 	});
 	
 
-	angular.module("shared", [])
+	angular.module("shared")
 	// https://github.com/Templarian/ui.bootstrap.contextMenu
 	.directive('contextMenu', ["$parse", function ($parse) {
 		var renderContextMenu = function ($scope, event, options, model) {

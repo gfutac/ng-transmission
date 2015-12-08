@@ -2,12 +2,12 @@
 	<div>
 		<h4 class="torrent-heading list-group-item-heading">{{torrent.name}}</h4>
 		<span ng-show="hasError" class="error-message-torrent-item">{{torrent.errorString}}</span>
-		<span ng-show="!hasError && isDownloading" class="downloading-message-torrent-item">Downloading from {{torrent.peersSendingToUs}} of {{torrent.peersConnected}} peers @ <i class="fa fa-long-arrow-up"></i> {{torrent.rateDownload}} <i class="fa fa-long-arrow-down"></i> {{torrent.rateUpload}}
+		<span ng-show="!hasError && isDownloading" class="downloading-message-torrent-item">Downloading from {{torrent.peersSendingToUs}} of {{torrent.peersConnected}} peers @ <i class="fa fa-long-arrow-down"></i> {{torrent.rateDownload}} <i class="fa fa-long-arrow-up"></i> {{torrent.rateUpload}}
 		</span>
 		<span ng-show="!hasError && isPaused" class="paused-message-torrent-item">Paused</span>
 		<span ng-show="!hasError && isSeeding" class="seeding-message-torrent-item">seeding to {{torrent.peersGettingFromUs}} of {{torrent.peersConnected}} peers - <i class="fa fa-long-arrow-up"></i> {{torrent.rateUpload}}</span>
 		<div class="progress">
-			<div class="progress-bar progress-bar-default progress-bar-striped" role="progressbar" aria-valuenow="{{torrent.percentDone}}" aria-valuemin="0" aria-valuemax="100" style="width: {{torrent.percentDone}}%">				
+			<div class="progress-bar progress-bar-striped" ng-class="{'progress-bar-default': isDownloading, 'progress-bar-success': isSeeding}" role="progressbar" aria-valuenow="{{torrent.percentDone}}" aria-valuemin="0" aria-valuemax="100" style="width: {{torrent.percentDone}}%">				
 			</div>
 		</div>									
 		<span ng-show="!hasError && isDownloading" class="downloading-ratio">{{torrent.downloadedSize}} of {{torrent.totalSize}} - {{torrent.eta}} remaining</span>

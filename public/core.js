@@ -30,7 +30,7 @@
                 }],
         };
     });
-    angular.module("shared", [])
+    angular.module("shared")
         .directive('contextMenu', ["$parse", function ($parse) {
             var renderContextMenu = function ($scope, event, options, model) {
                 if (!$) {
