@@ -883,6 +883,7 @@ var Shared;
                 controller: ["$scope", "HelperService", "TorrentService", function ($scope, hp, ts) {
                         var torrent = $scope.torrent;
                         $scope.hasError = torrent.error !== 0 || torrent.errorString !== "";
+                        $scope.isPaused = torrent.status === 0;
                         $scope.isDownloading = torrent.status === 4;
                         $scope.isSeeding = torrent.status === 6;
                         $scope.torrent.percentDone = torrent.percentDone * 100;

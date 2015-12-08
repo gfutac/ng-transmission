@@ -40,6 +40,10 @@ body{
 	color: #57AB34
 }
 
+.paused-message-torrent-item{
+	color: #CCC;
+}
+
 .progress{
 	height: 10px;
 	margin-bottom: 5px;
