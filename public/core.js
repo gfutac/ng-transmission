@@ -905,7 +905,61 @@ var Shared;
                                 enabled: function ($itemScope) {
                                     return $itemScope.torrent.status !== 0;
                                 }
-                            }
+                            },
+                            {
+                                text: "Resume",
+                                click: function ($itemScope) {
+                                    var torrentId = $itemScope.torrent.id;
+                                    ts.resumeTorrent(torrentId);
+                                },
+                                enabled: function ($itemScope) {
+                                    return $itemScope.torrent.status === 0;
+                                }
+                            },
+                            null,
+                            {
+                                text: 'Move to Top',
+                                click: function ($itemScope) {
+                                    var torrentId = $itemScope.torrent.id;
+                                    ts.moveTop(torrentId);
+                                },
+                            },
+                            {
+                                text: 'Move Up',
+                                click: function ($itemScope) {
+                                    var torrentId = $itemScope.torrent.id;
+                                    ts.moveUp(torrentId);
+                                },
+                            },
+                            {
+                                text: 'Move Down',
+                                click: function ($itemScope) {
+                                    var torrentId = $itemScope.torrent.id;
+                                    ts.moveDown(torrentId);
+                                },
+                            },
+                            {
+                                text: 'Move Move to Bottom',
+                                click: function ($itemScope) {
+                                    var torrentId = $itemScope.torrent.id;
+                                    ts.moveBot(torrentId);
+                                },
+                            },
+                            null,
+                            {
+                                text: 'Remove From List',
+                                click: function ($itemScope) {
+                                    var torrentId = $itemScope.torrent.id;
+                                    ts.removeTorrent(torrentId, false);
+                                },
+                            },
+                            {
+                                text: 'Trash Data and Remove From List',
+                                click: function ($itemScope) {
+                                    var torrentId = $itemScope.torrent.id;
+                                    ts.removeTorrent(torrentId, true);
+                                },
+                            },
                         ];
                     }]
             };

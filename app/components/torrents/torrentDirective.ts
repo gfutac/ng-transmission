@@ -43,47 +43,61 @@
 							enabled: function($itemScope){
 								return $itemScope.torrent.status !== 0;
 							}
-						}
-						// ['Pause', function ($itemScope) {
-						// 	var torrentId = $itemScope.torrent.id;
-						// 	ts.pauseTorrent(torrentId);
-						// }, function($itemScope) {
-						// 	// enable or disable pausing
-						// 	return $itemScope.torrent.status !== 0
-						// }],
-						// ['Resume', function ($itemScope) {
-						// 	var torrentId = $itemScope.torrent.id;
-						// 	ts.resumeTorrent(torrentId);
-						// }, function($itemScope){
-						// 	// enable or disable resuming
-						// 	return $itemScope.torrent.status === 0							
-						// }],
-						// null,
-						// ['Move to Top', function ($itemScope) {
-						// 	var torrentId = $itemScope.torrent.id;
-						// 	ts.moveTop(torrentId);
-						// }],
-						// ['Move Up', function ($itemScope) {
-						// 	var torrentId = $itemScope.torrent.id;
-						// 	ts.moveUp(torrentId);
-						// }],
-						// ['Move Down', function ($itemScope) {
-						// 	var torrentId = $itemScope.torrent.id;
-						// 	ts.moveDown(torrentId);
-						// }],
-						// ['Move Move to Bottom', function ($itemScope) {
-						// 	var torrentId = $itemScope.torrent.id;
-						// 	ts.moveBot(torrentId);
-						// }],
-						// null,
-						// ['Remove From List', function ($itemScope) {
-						// 	var torrentId = $itemScope.torrent.id;
-						// 	ts.removeTorrent(torrentId, false);
-						// }],
-						// ['Trash Data and Remove From List', function ($itemScope) {
-						// 	var torrentId = $itemScope.torrent.id;
-						// 	ts.removeTorrent(torrentId, true);
-						// }],						
+						},
+						{
+							text: "Resume",
+							click: function($itemScope){
+								var torrentId = $itemScope.torrent.id;
+								ts.resumeTorrent(torrentId);								
+							},
+							enabled: function ($itemScope){
+								return $itemScope.torrent.status === 0;
+							}
+						},
+						null,
+						{
+							text: 'Move to Top', 
+							click: function ($itemScope) {
+								var torrentId = $itemScope.torrent.id;
+								ts.moveTop(torrentId);
+							}, 
+						},										
+						{
+							text: 'Move Up', 
+							click: function ($itemScope) {
+								var torrentId = $itemScope.torrent.id;
+								ts.moveUp(torrentId);
+							},
+						},												
+						{
+							text: 'Move Down', 
+							click: function ($itemScope) {
+								var torrentId = $itemScope.torrent.id;
+								ts.moveDown(torrentId);
+							}, 
+						},											
+						{	
+							text: 'Move Move to Bottom', 
+							click: function ($itemScope) {
+								var torrentId = $itemScope.torrent.id;
+								ts.moveBot(torrentId);
+							}, 
+						},						
+						null,
+						{
+							text: 'Remove From List', 
+							click: function ($itemScope) {
+								var torrentId = $itemScope.torrent.id;
+								ts.removeTorrent(torrentId, false);
+							},
+						},						
+						{
+							text: 'Trash Data and Remove From List', 
+							click: function ($itemScope) {
+								var torrentId = $itemScope.torrent.id;
+								ts.removeTorrent(torrentId, true);
+							},
+						},						
 					];							
 				}]
 			};
