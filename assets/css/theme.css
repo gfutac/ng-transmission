@@ -105,3 +105,16 @@ body{
   cursor: inherit;
   display: block;
 }
+
+.dropdown-menu{
+	background-color: #3F3F46;
+}
+
+.dropdown-menu > li > a {
+	color: #27A4CD;	
+}
+
+.dropdown-menu > li > a:hover {
+	background-color: #ccc;
+	color: #27A4CD;		
+}

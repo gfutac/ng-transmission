@@ -12,6 +12,7 @@
 				transclude: true,
 				replace: true,
 				templateUrl: 'app/components/torrents/layouts/torrentList.html',
+
 			}		
 		}]);	
 })();

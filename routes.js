@@ -48,7 +48,38 @@ module.exports = function(app, rp){
 				"ids": "recently-active"
 			},
 			"method": "torrent-get"
-		};		
+		};
+		
+		var result = {
+		"arguments": {
+			"removed": [],
+			"torrents": [
+			{
+				"addedDate": 1449568145,
+				"error": 0,
+				"errorString": "",
+				"eta": 240944,
+				"id": 1,
+				"isFinished": false,
+				"isStalled": false,
+				"leftUntilDone": 2266326818,
+				"name": "Infini.2015.1080p.BluRay.H264.AAC-RARBG",
+				"peersConnected": 7,
+				"peersGettingFromUs": 0,
+				"peersSendingToUs": 4,
+				"percentDone": 0.0001,
+				"rateDownload": 9000,
+				"rateUpload": 0,
+				"status": 4,
+				"totalSize": 2266769186,
+				"uploadedEver": 0
+			}
+			]
+		},
+		"result": "success"
+		};			
+		
+		//res.send(result);	
 		
 		if (req.headers["x-transmission-session-id"]){
 			options.headers["X-transmission-session-id"] = req.headers['x-transmission-session-id'];
@@ -107,8 +138,206 @@ module.exports = function(app, rp){
 			res.send(response);
 		}, function(err){
 			res.send(err)
-		})
+		})		
+	});
+	
+	app.post("/transmission/rpc/pausetorrent", function(req, res){
+		var options = {
+			url: "http://localhost:9091/transmission/rpc", 
+			method: "POST", 
+			headers: {
+				'Authorization': req.headers['authorization'],
+				'X-transmission-session-id': req.headers['x-transmission-session-id'],
+				'Content-type': 'application/json',
+			},
+			json: true
+		};	
 		
+		var requestData = {  
+			"arguments":{
+				"ids": [req.body.torrentId]				
+			},
+			"method": "torrent-stop"
+		};	
+		
+		options.body = requestData;
+		
+		rp(options).then(function(response){
+			res.send(response);
+		}, function(err){
+			res.send(err)
+		});								
+	});
+
+	app.post("/transmission/rpc/resumetorrent", function(req, res){
+		var options = {
+			url: "http://localhost:9091/transmission/rpc", 
+			method: "POST", 
+			headers: {
+				'Authorization': req.headers['authorization'],
+				'X-transmission-session-id': req.headers['x-transmission-session-id'],
+				'Content-type': 'application/json',
+			},
+			json: true
+		};	
+		
+		var requestData = {  
+			"arguments":{
+				"ids": [req.body.torrentId]				
+			},
+			"method": "torrent-start"
+		};	
+		
+		options.body = requestData;
+		
+		rp(options).then(function(response){
+			res.send(response);
+		}, function(err){
+			res.send(err)
+		});								
+	});
+
+	app.post("/transmission/rpc/movetop", function(req, res){
+		var options = {
+			url: "http://localhost:9091/transmission/rpc", 
+			method: "POST", 
+			headers: {
+				'Authorization': req.headers['authorization'],
+				'X-transmission-session-id': req.headers['x-transmission-session-id'],
+				'Content-type': 'application/json',
+			},
+			json: true
+		};	
+		
+		var requestData = {  
+			"arguments":{
+				"ids": [req.body.torrentId]				
+			},
+			"method": "queue-move-top"
+		};	
+		
+		options.body = requestData;
+		
+		rp(options).then(function(response){
+			res.send(response);
+		}, function(err){
+			res.send(err)
+		});		
+	});
+	
+
+	app.post("/transmission/rpc/moveup", function(req, res){
+		var options = {
+			url: "http://localhost:9091/transmission/rpc", 
+			method: "POST", 
+			headers: {
+				'Authorization': req.headers['authorization'],
+				'X-transmission-session-id': req.headers['x-transmission-session-id'],
+				'Content-type': 'application/json',
+			},
+			json: true
+		};	
+		
+		var requestData = {  
+			"arguments":{
+				"ids": [req.body.torrentId]				
+			},
+			"method": "queue-move-up"
+		};	
+		
+		options.body = requestData;
+		
+		rp(options).then(function(response){
+			res.send(response);
+		}, function(err){
+			res.send(err)
+		});		
+	});	
+	
+	app.post("/transmission/rpc/movedown", function(req, res){
+		var options = {
+			url: "http://localhost:9091/transmission/rpc", 
+			method: "POST", 
+			headers: {
+				'Authorization': req.headers['authorization'],
+				'X-transmission-session-id': req.headers['x-transmission-session-id'],
+				'Content-type': 'application/json',
+			},
+			json: true
+		};	
+		
+		var requestData = {  
+			"arguments":{
+				"ids": [req.body.torrentId]				
+			},
+			"method": "queue-move-down"
+		};	
+		
+		options.body = requestData;
+		
+		rp(options).then(function(response){
+			res.send(response);
+		}, function(err){
+			res.send(err)
+		});		
+	});
+	
+
+	app.post("/transmission/rpc/movebot", function(req, res){
+		var options = {
+			url: "http://localhost:9091/transmission/rpc", 
+			method: "POST", 
+			headers: {
+				'Authorization': req.headers['authorization'],
+				'X-transmission-session-id': req.headers['x-transmission-session-id'],
+				'Content-type': 'application/json',
+			},
+			json: true
+		};	
+		
+		var requestData = {  
+			"arguments":{
+				"ids": [req.body.torrentId]				
+			},
+			"method": "queue-move-bottom"
+		};	
+		
+		options.body = requestData;
+		
+		rp(options).then(function(response){
+			res.send(response);
+		}, function(err){
+			res.send(err)
+		});		
+	});	
+	
+	app.post("/transmission/rpc/removetorrent", function(req, res){
+		var options = {
+			url: "http://localhost:9091/transmission/rpc", 
+			method: "POST", 
+			headers: {
+				'Authorization': req.headers['authorization'],
+				'X-transmission-session-id': req.headers['x-transmission-session-id'],
+				'Content-type': 'application/json',
+			},
+			json: true
+		};	
+		
+		var requestData = {  
+			"arguments":{
+				"ids": [req.body.torrentId],
+				"delete-local-data": req.body.deleteLocalData				
+			},
+			"method": "torrent-remove"
+		};	
+		
+		options.body = requestData;
+		
+		rp(options).then(function(response){
+			res.send(response);
+		}, function(err){
+			res.send(err)
+		});			
 	})
 
 }

@@ -30,6 +30,97 @@
                 }],
         };
     });
+    angular.module("shared", [])
+        .directive('contextMenu', ["$parse", function ($parse) {
+            var renderContextMenu = function ($scope, event, options, model) {
+                if (!$) {
+                    var $ = angular.element;
+                }
+                $(event.currentTarget).addClass('context');
+                var $contextMenu = $('<div>');
+                $contextMenu.addClass('dropdown clearfix');
+                var $ul = $('<ul>');
+                $ul.addClass('dropdown-menu');
+                $ul.attr({ 'role': 'menu' });
+                $ul.css({
+                    display: 'block',
+                    position: 'absolute',
+                    left: event.pageX + 'px',
+                    top: event.pageY + 'px'
+                });
+                angular.forEach(options, function (item, i) {
+                    var $li = $('<li>');
+                    if (item === null) {
+                        $li.addClass('divider');
+                    }
+                    else {
+                        var $a = $('<a>');
+                        $a.attr({ tabindex: '-1', href: '#' });
+                        var text = typeof item[0] == 'string' ? item[0] : item[0].call($scope, $scope, event, model);
+                        $a.text(text);
+                        $li.append($a);
+                        var enabled = angular.isDefined(item[2]) ? item[2].call($scope, $scope, event, text, model) : true;
+                        if (enabled) {
+                            $li.on('click', function ($event) {
+                                $event.preventDefault();
+                                $scope.$apply(function () {
+                                    $(event.currentTarget).removeClass('context');
+                                    $contextMenu.remove();
+                                    item[1].call($scope, $scope, event, model);
+                                });
+                            });
+                        }
+                        else {
+                            $li.on('click', function ($event) {
+                                $event.preventDefault();
+                            });
+                            $li.addClass('disabled');
+                        }
+                    }
+                    $ul.append($li);
+                });
+                $contextMenu.append($ul);
+                var height = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, document.body.offsetHeight, document.documentElement.offsetHeight, document.body.clientHeight, document.documentElement.clientHeight);
+                $contextMenu.css({
+                    width: '100%',
+                    height: height + 'px',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    zIndex: 9999
+                });
+                $(document).find('body').append($contextMenu);
+                $contextMenu.on("mousedown", function (e) {
+                    if ($(e.target).hasClass('dropdown')) {
+                        $(event.currentTarget).removeClass('context');
+                        $contextMenu.remove();
+                    }
+                }).on('contextmenu', function (event) {
+                    $(event.currentTarget).removeClass('context');
+                    event.preventDefault();
+                    $contextMenu.remove();
+                });
+            };
+            return function ($scope, element, attrs) {
+                element.on('contextmenu', function (event) {
+                    event.stopPropagation();
+                    $scope.$apply(function () {
+                        event.preventDefault();
+                        var options = $scope.$eval(attrs.contextMenu);
+                        var model = $scope.$eval(attrs.model);
+                        if (options instanceof Array) {
+                            if (options.length === 0) {
+                                return;
+                            }
+                            renderContextMenu($scope, event, options, model);
+                        }
+                        else {
+                            throw '"' + attrs.contextMenu + '" not an array';
+                        }
+                    });
+                });
+            };
+        }]);
 })();
 /// <reference path="../../shared/sharedModule.ts" />
 /// <reference path="../../../typings/angularjs/angular.d.ts" />
@@ -65,6 +156,104 @@ var Shared;
                         deferred.resolve(response);
                     }, function (response) {
                         deferred.reject({ msg: "Something gone wrong while adding a torrent." });
+                    });
+                    return deferred.promise;
+                };
+                this.pauseTorrent = function (id) {
+                    var deferred = _this.$q.defer();
+                    _this.$http.post('/transmission/rpc/pausetorrent', { torrentId: id }, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    }).
+                        then(function (response) {
+                        deferred.resolve(response);
+                    }, function (response) {
+                        deferred.reject({ msg: "Something gone wrong while pausing torrent." });
+                    });
+                    return deferred.promise;
+                };
+                this.resumeTorrent = function (id) {
+                    var deferred = _this.$q.defer();
+                    _this.$http.post('/transmission/rpc/resumetorrent', { torrentId: id }, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    }).
+                        then(function (response) {
+                        deferred.resolve(response);
+                    }, function (response) {
+                        deferred.reject({ msg: "Something gone wrong while resuming torrent." });
+                    });
+                    return deferred.promise;
+                };
+                this.moveTop = function (id) {
+                    var deferred = _this.$q.defer();
+                    _this.$http.post('/transmission/rpc/movetop', { torrentId: id }, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    }).
+                        then(function (response) {
+                        deferred.resolve(response);
+                    }, function (response) {
+                        deferred.reject({ msg: "Something gone wrong while moving torrent to the top of the queue." });
+                    });
+                    return deferred.promise;
+                };
+                this.moveUp = function (id) {
+                    var deferred = _this.$q.defer();
+                    _this.$http.post('/transmission/rpc/moveup', { torrentId: id }, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    }).
+                        then(function (response) {
+                        deferred.resolve(response);
+                    }, function (response) {
+                        deferred.reject({ msg: "Something gone wrong while moving torrent up in the queue." });
+                    });
+                    return deferred.promise;
+                };
+                this.moveDown = function (id) {
+                    var deferred = _this.$q.defer();
+                    _this.$http.post('/transmission/rpc/movedown', { torrentId: id }, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    }).
+                        then(function (response) {
+                        deferred.resolve(response);
+                    }, function (response) {
+                        deferred.reject({ msg: "Something gone wrong while moving torrent down in the queue." });
+                    });
+                    return deferred.promise;
+                };
+                this.moveBot = function (id) {
+                    var deferred = _this.$q.defer();
+                    _this.$http.post('/transmission/rpc/movebot', { torrentId: id }, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    }).
+                        then(function (response) {
+                        deferred.resolve(response);
+                    }, function (response) {
+                        deferred.reject({ msg: "Something gone wrong while moving torrent to the bottom of the queue." });
+                    });
+                    return deferred.promise;
+                };
+                this.removeTorrent = function (id, trashData) {
+                    var deferred = _this.$q.defer();
+                    _this.$http.post('/transmission/rpc/removetorrent', { torrentId: id, deleteLocalData: trashData }, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    }).
+                        then(function (response) {
+                        deferred.resolve(response);
+                    }, function (response) {
+                        deferred.reject({ msg: "Something gone wrong while removing torrent." });
                     });
                     return deferred.promise;
                 };
@@ -154,6 +343,11 @@ var Shared;
                     });
                     return deferred.promise;
                 };
+                /**
+                 *
+                 * Methods for getting torrents
+                 *
+                 *  */
                 this.getRecentlyActiveTorrents = function () {
                     return _this.getAndFilterTorrents(FilterEnum.All);
                 };
@@ -162,6 +356,48 @@ var Shared;
                 };
                 this.getSeedingTorrents = function () {
                     return _this.getAndFilterTorrents(FilterEnum.Seeding);
+                };
+                /**
+                 * Pauses selected torrent.
+                 *  */
+                this.pauseTorrent = function (id) {
+                    return _this.rpc.pauseTorrent(id);
+                };
+                /**
+                 * Resumes selected torrent.
+                 */
+                this.resumeTorrent = function (id) {
+                    return _this.rpc.resumeTorrent(id);
+                };
+                /**
+                 * Moves torrent to the top of the queue.
+                 */
+                this.moveTop = function (id) {
+                    return _this.rpc.moveTop(id);
+                };
+                /**
+                 * Moves torrent one place up in the queue.
+                 */
+                this.moveUp = function (id) {
+                    return _this.rpc.moveUp(id);
+                };
+                /**
+                 * Moves torrent one place down in the queue.
+                 */
+                this.moveDown = function (id) {
+                    return _this.rpc.moveDown(id);
+                };
+                /**
+                 * Moves torrent to the bottom of the queue.
+                 */
+                this.moveBot = function (id) {
+                    return _this.rpc.moveBot(id);
+                };
+                /**
+                 * Removes torrent from the list (and trash data if trashData is set to true)
+                 */
+                this.removeTorrent = function (id, trashData) {
+                    return _this.rpc.removeTorrent(id, trashData);
                 };
                 this.rpc = rpc;
                 this.$q = $q;
@@ -494,7 +730,7 @@ var Shared;
 /// <reference path="shared/HelperService.ts" />
 /// <reference path="shared/userService.ts" />
 (function () {
-    var app = angular.module("app", ['ui.router', 'ui.bootstrap', 'eehNavigation', 'pascalprecht.translate', 'ng-context-menu', 'shared']);
+    var app = angular.module("app", ['ui.router', 'ui.bootstrap', 'eehNavigation', 'pascalprecht.translate', 'shared']);
     app.config(["$stateProvider", "$urlRouterProvider", "$translateProvider",
         function ($stateProvider, $urlRouterProvider, $translateProvider) {
             // sanitaze html (escape)
@@ -644,7 +880,7 @@ var Shared;
                 templateUrl: "app/components/torrents/layouts/torrent.html",
                 link: function (scope, element, attributes) {
                 },
-                controller: ["$scope", "HelperService", function ($scope, hp) {
+                controller: ["$scope", "HelperService", "TorrentService", function ($scope, hp, ts) {
                         var torrent = $scope.torrent;
                         $scope.hasError = torrent.error !== 0 || torrent.errorString !== "";
                         $scope.isDownloading = torrent.status === 4;
@@ -658,6 +894,42 @@ var Shared;
                         $scope.torrent.downloadedSize = hp.size(torrent.totalSize - torrent.leftUntilDone);
                         $scope.torrent.totalSize = hp.size(torrent.totalSize);
                         $scope.torrent.uploadedEver = hp.size(torrent.uploadedEver);
+                        $scope.menuOptions = [
+                            ['Pause', function ($itemScope) {
+                                    var torrentId = $itemScope.torrent.id;
+                                    ts.pauseTorrent(torrentId);
+                                }],
+                            ['Resume', function ($itemScope) {
+                                    var torrentId = $itemScope.torrent.id;
+                                    ts.resumeTorrent(torrentId);
+                                }],
+                            null,
+                            ['Move to Top', function ($itemScope) {
+                                    var torrentId = $itemScope.torrent.id;
+                                    ts.moveTop(torrentId);
+                                }],
+                            ['Move Up', function ($itemScope) {
+                                    var torrentId = $itemScope.torrent.id;
+                                    ts.moveUp(torrentId);
+                                }],
+                            ['Move Down', function ($itemScope) {
+                                    var torrentId = $itemScope.torrent.id;
+                                    ts.moveDown(torrentId);
+                                }],
+                            ['Move Move to Bottom', function ($itemScope) {
+                                    var torrentId = $itemScope.torrent.id;
+                                    ts.moveBot(torrentId);
+                                }],
+                            null,
+                            ['Remove From List', function ($itemScope) {
+                                    var torrentId = $itemScope.torrent.id;
+                                    ts.removeTorrent(torrentId, false);
+                                }],
+                            ['Trash Data and Remove From List', function ($itemScope) {
+                                    var torrentId = $itemScope.torrent.id;
+                                    ts.removeTorrent(torrentId, true);
+                                }],
+                        ];
                     }]
             };
         }]);

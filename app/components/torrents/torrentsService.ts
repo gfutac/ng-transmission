@@ -121,7 +121,13 @@ module Shared.Services {
 								
 			return deferred.promise;			
 		}
-						
+		
+		
+		/**
+		 * 
+		 * Methods for getting torrents
+		 *  
+		 *  */							
 		public getRecentlyActiveTorrents = () => {
 			return this.getAndFilterTorrents(FilterEnum.All);
 		}
@@ -132,7 +138,56 @@ module Shared.Services {
 		
 		public getSeedingTorrents = () => {
 			return this.getAndFilterTorrents(FilterEnum.Seeding);			
-		}				
+		}		
+		
+		/**
+		 * Pauses selected torrent.
+		 *  */		
+		 public pauseTorrent = (id: number) => {
+			 return this.rpc.pauseTorrent(id);
+		 }
+		 
+		 /**
+		  * Resumes selected torrent.
+		  */
+		 public resumeTorrent = (id: number) => {
+			 return this.rpc.resumeTorrent(id);
+		 }
+		 
+		 /**
+		  * Moves torrent to the top of the queue.
+		  */
+		 public moveTop = (id: number) => {
+			 return this.rpc.moveTop(id);
+		 }
+		 
+		 /**
+		  * Moves torrent one place up in the queue.
+		  */
+		 public moveUp = (id: number) => {
+			 return this.rpc.moveUp(id);
+		 }
+		 
+		 /**
+		  * Moves torrent one place down in the queue.
+		  */
+		 public moveDown = (id: number) => {
+			 return this.rpc.moveDown(id);
+		 }
+		 
+		 /**
+		  * Moves torrent to the bottom of the queue.
+		  */
+		 public moveBot = (id: number) => {
+			 return this.rpc.moveBot(id);
+		 }
+		 
+		 /**
+		  * Removes torrent from the list (and trash data if trashData is set to true)
+		  */
+		 public removeTorrent = (id: number, trashData: boolean) => {
+			 return this.rpc.removeTorrent(id, trashData);
+		 }		 
 	}
 	
 	angular.module("shared").service("TorrentService", TorrentService);		
