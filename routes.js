@@ -146,7 +146,7 @@ module.exports = function(app, rp, appOptions){
 		})		
 	});
 	
-	app.post("/transmission/rpc/resumeall", function(req, res){
+	app.post("/transmission/rpc/resumealltorrents", function(req, res){
 		var options = {
 			url: transmissionUrl, 
 			method: "POST", 
@@ -174,7 +174,7 @@ module.exports = function(app, rp, appOptions){
 		});								
 	});	
 	
-	app.post("/transmission/rpc/pauseall", function(req, res){
+	app.post("/transmission/rpc/pausealltorrents", function(req, res){
 		var options = {
 			url: transmissionUrl, 
 			method: "POST", 

@@ -58,7 +58,7 @@ module Shared.Services {
 		public resumeAllTorrents = () => {
 			var deferred = this.$q.defer();
 			
-			this.$http.post('/transmission/rpc/resumeall', {}, {
+			this.$http.post('/transmission/rpc/resumealltorrents', {}, {
 				headers: {
 					'Content-Type': 'application/json',
 				}
@@ -75,7 +75,7 @@ module Shared.Services {
 		public pauseAllTorrents = () => {
 			var deferred = this.$q.defer();
 			
-			this.$http.post('/transmission/rpc/pauseall', {}, {
+			this.$http.post('/transmission/rpc/pausealltorrents', {}, {
 				headers: {
 					'Content-Type': 'application/json',
 				}

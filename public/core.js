@@ -161,7 +161,7 @@ var Shared;
                 };
                 this.resumeAllTorrents = function () {
                     var deferred = _this.$q.defer();
-                    _this.$http.post('/transmission/rpc/resumeall', {}, {
+                    _this.$http.post('/transmission/rpc/resumealltorrents', {}, {
                         headers: {
                             'Content-Type': 'application/json',
                         }
@@ -175,7 +175,7 @@ var Shared;
                 };
                 this.pauseAllTorrents = function () {
                     var deferred = _this.$q.defer();
-                    _this.$http.post('/transmission/rpc/pauseall', {}, {
+                    _this.$http.post('/transmission/rpc/pausealltorrents', {}, {
                         headers: {
                             'Content-Type': 'application/json',
                         }
