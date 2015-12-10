@@ -38,7 +38,11 @@ app.use('/app', express.static(__dirname + '/app/'));
 
 require('./routes.js')(app, rp, options)
 
-console.log(JSON.stringify(app._router.stack));
+app._router.stack.forEach(function(r){
+    if (r.route && r.route.path){
+        console.log(r.route.path)
+    }
+});
 
 app.listen(options.port);
 
