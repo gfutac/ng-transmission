@@ -23,8 +23,6 @@ module.exports = function(app, rp, appOptions){
 			}
 		};
 		
-		console.log(options);
-		
 		rp(options).then(
 			function success(response){
 				res.send({statusCode: 200});
@@ -133,9 +131,9 @@ module.exports = function(app, rp, appOptions){
 			"method": "torrent-add"
 		};		
 		
-		if (!!req.body.filename){
+		if (!!req.body.filename) {
 			requestData.arguments.filename = req.body.filename;
-		} else if (!!req.body.metainfo){
+		} else if (!!req.body.metainfo) {
 			requestData.arguments.metainfo = req.body.metainfo;
 		}
 		

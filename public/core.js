@@ -881,7 +881,7 @@ var Shared;
             })
                 .menuItem("navbar.resumeAll", {
                 text: "Resume all",
-                iconClas: "fa fa-play-circle",
+                iconClass: "fa fa-play-circle",
                 weight: -1,
                 click: function () {
                     torrentService.resumeAllTorrents();
