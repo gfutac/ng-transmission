@@ -8,6 +8,7 @@ module.exports = function(app, rp, appOptions){
 	}	
 	
 	var transmissionUrl = appOptions.rpcurl + ":" + appOptions.rpcport + "/transmission/rpc"; 
+	console.log("/nTransmission RPC url:" + transmissionUrl);
 				
 	app.get("/", function(req, res){
 		res.sendFile(__dirname + './public/index.html');
