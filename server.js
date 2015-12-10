@@ -28,7 +28,7 @@ var options = cli.parse();
 app.use(bodyParser.urlencoded({limit: '5mb'}));
 app.use(bodyParser.json({limit: '5mb'}))
 
-//app.use(morgan('combined'));
+// app.use(morgan('combined'));
 app.use(express.static(__dirname + '/public'));
 app.use('/assets', express.static(__dirname + '/assets/'));
 app.use('/app', express.static(__dirname + '/app/'));
@@ -36,8 +36,9 @@ app.use('/app', express.static(__dirname + '/app/'));
 
 // app.use(allowCrossDomain);
 
-
 require('./routes.js')(app, rp, options)
+
+console.log(JSON.stringify(app._router.stack));
 
 app.listen(options.port);
 
