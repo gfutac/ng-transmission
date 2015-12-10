@@ -55,10 +55,10 @@ module Shared.Services {
 			return deferred.promise;			
 		}	
 		
-		public pauseTorrent = (id: number) => {
+		public resumeAllTorrents = () => {
 			var deferred = this.$q.defer();
 			
-			this.$http.post('/transmission/rpc/pausetorrent', {torrentId: id}, {
+			this.$http.post('/transmission/rpc/resumeall', {}, {
 				headers: {
 					'Content-Type': 'application/json',
 				}
@@ -66,10 +66,27 @@ module Shared.Services {
 			then(function (response){
 				deferred.resolve(response);				
 			}, function (response){
-				deferred.reject({msg: "Something gone wrong while pausing torrent."})
+				deferred.reject({msg: "Something gone wrong while resuming torrents."})
 			});				
 			
-			return deferred.promise;
+			return deferred.promise;			
+		}
+		
+		public pauseAllTorrents = () => {
+			var deferred = this.$q.defer();
+			
+			this.$http.post('/transmission/rpc/pauseall', {}, {
+				headers: {
+					'Content-Type': 'application/json',
+				}
+			}).
+			then(function (response){
+				deferred.resolve(response);				
+			}, function (response){
+				deferred.reject({msg: "Something gone wrong while pausing torrents."})
+			});				
+			
+			return deferred.promise;			
 		}		
 		
 		public resumeTorrent = (id: number) => {
@@ -88,6 +105,23 @@ module Shared.Services {
 			
 			return deferred.promise;
 		}		
+		
+		public pauseTorrent = (id: number) => {
+			var deferred = this.$q.defer();
+			
+			this.$http.post('/transmission/rpc/pausetorrent', {torrentId: id}, {
+				headers: {
+					'Content-Type': 'application/json',
+				}
+			}).
+			then(function (response){
+				deferred.resolve(response);				
+			}, function (response){
+				deferred.reject({msg: "Something gone wrong while pausing torrent."})
+			});				
+			
+			return deferred.promise;
+		}			
 		
 		public moveTop = (id: number) => {
 			var deferred = this.$q.defer();

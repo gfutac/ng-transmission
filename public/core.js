@@ -159,9 +159,9 @@ var Shared;
                     });
                     return deferred.promise;
                 };
-                this.pauseTorrent = function (id) {
+                this.resumeAllTorrents = function () {
                     var deferred = _this.$q.defer();
-                    _this.$http.post('/transmission/rpc/pausetorrent', { torrentId: id }, {
+                    _this.$http.post('/transmission/rpc/resumeall', {}, {
                         headers: {
                             'Content-Type': 'application/json',
                         }
@@ -169,7 +169,21 @@ var Shared;
                         then(function (response) {
                         deferred.resolve(response);
                     }, function (response) {
-                        deferred.reject({ msg: "Something gone wrong while pausing torrent." });
+                        deferred.reject({ msg: "Something gone wrong while resuming torrents." });
+                    });
+                    return deferred.promise;
+                };
+                this.pauseAllTorrents = function () {
+                    var deferred = _this.$q.defer();
+                    _this.$http.post('/transmission/rpc/pauseall', {}, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    }).
+                        then(function (response) {
+                        deferred.resolve(response);
+                    }, function (response) {
+                        deferred.reject({ msg: "Something gone wrong while pausing torrents." });
                     });
                     return deferred.promise;
                 };
@@ -184,6 +198,20 @@ var Shared;
                         deferred.resolve(response);
                     }, function (response) {
                         deferred.reject({ msg: "Something gone wrong while resuming torrent." });
+                    });
+                    return deferred.promise;
+                };
+                this.pauseTorrent = function (id) {
+                    var deferred = _this.$q.defer();
+                    _this.$http.post('/transmission/rpc/pausetorrent', { torrentId: id }, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    }).
+                        then(function (response) {
+                        deferred.resolve(response);
+                    }, function (response) {
+                        deferred.reject({ msg: "Something gone wrong while pausing torrent." });
                     });
                     return deferred.promise;
                 };
@@ -358,16 +386,28 @@ var Shared;
                     return _this.getAndFilterTorrents(FilterEnum.Seeding);
                 };
                 /**
-                 * Pauses selected torrent.
+                 * Resumes all torrents
                  *  */
-                this.pauseTorrent = function (id) {
-                    return _this.rpc.pauseTorrent(id);
+                this.resumeAllTorrents = function () {
+                    return _this.rpc.resumeAllTorrents();
+                };
+                /**
+                 * Pauses all torrents.
+                 */
+                this.pauseAllTorrents = function () {
+                    return _this.rpc.pauseAllTorrents();
                 };
                 /**
                  * Resumes selected torrent.
                  */
                 this.resumeTorrent = function (id) {
                     return _this.rpc.resumeTorrent(id);
+                };
+                /**
+                 * Pauses selected torrent.
+                 *  */
+                this.pauseTorrent = function (id) {
+                    return _this.rpc.pauseTorrent(id);
                 };
                 /**
                  * Moves torrent to the top of the queue.
@@ -839,11 +879,20 @@ var Shared;
                     torrentService.showAddTorrentDialog();
                 }
             })
+                .menuItem("navbar.resumeAll", {
+                text: "Resume all",
+                iconClas: "fa fa-play-circle",
+                weight: -1,
+                click: function () {
+                    torrentService.resumeAllTorrents();
+                }
+            })
                 .menuItem("navbar.pauseAll", {
                 text: "Pause all",
                 iconClass: "fa fa-pause-circle",
                 weight: -1,
                 click: function () {
+                    torrentService.pauseAllTorrents();
                 }
             });
             // sidebar

@@ -24,12 +24,20 @@
 					torrentService.showAddTorrentDialog();	
 				}
 			})
+			.menuItem("navbar.resumeAll", {
+				text: "Resume all",
+				iconClas: "fa fa-play-circle",
+				weight: -1,
+				click: function(){
+					torrentService.resumeAllTorrents();
+				}
+			})
 			.menuItem("navbar.pauseAll", {
 				text: "Pause all",
 				iconClass: "fa fa-pause-circle",
 				weight: -1,
 				click: function() {
-					
+					torrentService.pauseAllTorrents();
 				}
 			});			
 		

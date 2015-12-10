@@ -1,11 +1,13 @@
 
 
-module.exports = function(app, rp){
+module.exports = function(app, rp, appOptions){
 		
 	var allTorrentsIds = [];
 	for (var i = 1; i < 100; ++i){
 		allTorrentsIds.push(i);
 	}	
+	
+	var transmissionUrl = appOptions.rpcurl + ":" + appOptions.rpcport + "/transmission/rpc"; 
 				
 	app.get("/", function(req, res){
 		res.sendFile(__dirname + './public/index.html');
@@ -13,7 +15,7 @@ module.exports = function(app, rp){
 	
 	app.post("/transmission/rpc/login", function(req, res){
 		var options = {
-			url: "http://localhost:9091/transmission/rpc", 
+			url: transmissionUrl, 
 			method: "POST", 
 			headers: {
 				'Content-type': 'application/json',
@@ -39,7 +41,7 @@ module.exports = function(app, rp){
 	app.post("/transmission/rpc/gettorrents", function(req, res) {
 		
 		var options = {
-			url: "http://localhost:9091/transmission/rpc", 
+			url: transmissionUrl, 
 			method: "POST", 
 			headers: {
 				'Authorization': req.headers['authorization'],
@@ -115,7 +117,7 @@ module.exports = function(app, rp){
 	app.post("/transmission/rpc/addtorrent", function(req, res){
 		
 		var options = {
-			url: "http://localhost:9091/transmission/rpc", 
+			url: transmissionUrl, 
 			method: "POST", 
 			headers: {
 				'Authorization': req.headers['authorization'],
@@ -146,9 +148,93 @@ module.exports = function(app, rp){
 		})		
 	});
 	
+	app.post("/transmission/rpc/resumeall", function(req, res){
+		var options = {
+			url: transmissionUrl, 
+			method: "POST", 
+			headers: {
+				'Authorization': req.headers['authorization'],
+				'X-transmission-session-id': req.headers['x-transmission-session-id'],
+				'Content-type': 'application/json',
+			},
+			json: true
+		};	
+		
+		var requestData = {  
+			"arguments":{
+				"ids": allTorrentsIds			
+			},
+			"method": "torrent-start"
+		};	
+		
+		options.body = requestData;
+		
+		rp(options).then(function(response){
+			res.send(response);
+		}, function(err){
+			res.send(err)
+		});								
+	});	
+	
+	app.post("/transmission/rpc/pauseall", function(req, res){
+		var options = {
+			url: transmissionUrl, 
+			method: "POST", 
+			headers: {
+				'Authorization': req.headers['authorization'],
+				'X-transmission-session-id': req.headers['x-transmission-session-id'],
+				'Content-type': 'application/json',
+			},
+			json: true
+		};	
+		
+		var requestData = {  
+			"arguments":{
+				"ids": allTorrentsIds			
+			},
+			"method": "torrent-stop"
+		};	
+		
+		options.body = requestData;
+		
+		rp(options).then(function(response){
+			res.send(response);
+		}, function(err){
+			res.send(err)
+		});								
+	});		
+	
+	app.post("/transmission/rpc/resumetorrent", function(req, res){
+		var options = {
+			url: transmissionUrl, 
+			method: "POST", 
+			headers: {
+				'Authorization': req.headers['authorization'],
+				'X-transmission-session-id': req.headers['x-transmission-session-id'],
+				'Content-type': 'application/json',
+			},
+			json: true
+		};	
+		
+		var requestData = {  
+			"arguments":{
+				"ids": [req.body.torrentId]				
+			},
+			"method": "torrent-start"
+		};	
+		
+		options.body = requestData;
+		
+		rp(options).then(function(response){
+			res.send(response);
+		}, function(err){
+			res.send(err)
+		});								
+	});	
+	
 	app.post("/transmission/rpc/pausetorrent", function(req, res){
 		var options = {
-			url: "http://localhost:9091/transmission/rpc", 
+			url: transmissionUrl, 
 			method: "POST", 
 			headers: {
 				'Authorization': req.headers['authorization'],
@@ -174,37 +260,9 @@ module.exports = function(app, rp){
 		});								
 	});
 
-	app.post("/transmission/rpc/resumetorrent", function(req, res){
-		var options = {
-			url: "http://localhost:9091/transmission/rpc", 
-			method: "POST", 
-			headers: {
-				'Authorization': req.headers['authorization'],
-				'X-transmission-session-id': req.headers['x-transmission-session-id'],
-				'Content-type': 'application/json',
-			},
-			json: true
-		};	
-		
-		var requestData = {  
-			"arguments":{
-				"ids": [req.body.torrentId]				
-			},
-			"method": "torrent-start"
-		};	
-		
-		options.body = requestData;
-		
-		rp(options).then(function(response){
-			res.send(response);
-		}, function(err){
-			res.send(err)
-		});								
-	});
-
 	app.post("/transmission/rpc/movetop", function(req, res){
 		var options = {
-			url: "http://localhost:9091/transmission/rpc", 
+			url: transmissionUrl, 
 			method: "POST", 
 			headers: {
 				'Authorization': req.headers['authorization'],
@@ -233,7 +291,7 @@ module.exports = function(app, rp){
 
 	app.post("/transmission/rpc/moveup", function(req, res){
 		var options = {
-			url: "http://localhost:9091/transmission/rpc", 
+			url: transmissionUrl, 
 			method: "POST", 
 			headers: {
 				'Authorization': req.headers['authorization'],
@@ -261,7 +319,7 @@ module.exports = function(app, rp){
 	
 	app.post("/transmission/rpc/movedown", function(req, res){
 		var options = {
-			url: "http://localhost:9091/transmission/rpc", 
+			url: transmissionUrl, 
 			method: "POST", 
 			headers: {
 				'Authorization': req.headers['authorization'],
@@ -290,7 +348,7 @@ module.exports = function(app, rp){
 
 	app.post("/transmission/rpc/movebot", function(req, res){
 		var options = {
-			url: "http://localhost:9091/transmission/rpc", 
+			url: transmissionUrl, 
 			method: "POST", 
 			headers: {
 				'Authorization': req.headers['authorization'],
@@ -318,7 +376,7 @@ module.exports = function(app, rp){
 	
 	app.post("/transmission/rpc/removetorrent", function(req, res){
 		var options = {
-			url: "http://localhost:9091/transmission/rpc", 
+			url: transmissionUrl, 
 			method: "POST", 
 			headers: {
 				'Authorization': req.headers['authorization'],

@@ -138,7 +138,28 @@ module Shared.Services {
 		
 		public getSeedingTorrents = () => {
 			return this.getAndFilterTorrents(FilterEnum.Seeding);			
-		}		
+		}
+		
+		/**
+		 * Resumes all torrents
+		 *  */
+		 public resumeAllTorrents = () => {
+			 return this.rpc.resumeAllTorrents();
+		 }	
+		 
+		 /**
+		  * Pauses all torrents.
+		  */
+		  public pauseAllTorrents = () => {
+			  return this.rpc.pauseAllTorrents();
+		  }
+		
+		 /**
+		  * Resumes selected torrent.
+		  */
+		 public resumeTorrent = (id: number) => {
+			 return this.rpc.resumeTorrent(id);
+		 }		
 		
 		/**
 		 * Pauses selected torrent.
@@ -146,14 +167,7 @@ module Shared.Services {
 		 public pauseTorrent = (id: number) => {
 			 return this.rpc.pauseTorrent(id);
 		 }
-		 
-		 /**
-		  * Resumes selected torrent.
-		  */
-		 public resumeTorrent = (id: number) => {
-			 return this.rpc.resumeTorrent(id);
-		 }
-		 
+		 		 
 		 /**
 		  * Moves torrent to the top of the queue.
 		  */
